@@ -20,6 +20,15 @@
                         <span> Data PKS </span>
                     </a>
                 </li>
+
+                <li class="menu-title">Jatuh Tempo</li>
+                
+                <li>
+                    <a href="jt30.php" class="waves-effect">
+                        <i class="mdi mdi-police-badge"></i>
+                        <span> 30 Hari </span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

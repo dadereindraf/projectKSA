@@ -147,8 +147,8 @@ if (isset($_POST["submit"])) {
                 $pic = $data[8];
 
                 // Lakukan operasi INSERT SQL ke dalam tabel database
-                $sql = "INSERT INTO datapks (nama, nomor_pks, ruang_lingkup, tanggal_awal, tanggal_akhir, tahun, link_pks, status, pic) 
-                        VALUES ('$nama', '$nomor_pks', '$ruang_lingkup', '$tanggal_awal_converted', '$tanggal_akhir_converted', '$tahun', '$link_pks', '$status', '$pic')";
+                $sql = "INSERT INTO datapks (nama, no_telp, nomor_pks, ruang_lingkup, tanggal_awal, tanggal_akhir, tahun, link_pks, status, pic) 
+                        VALUES ('$nama', '$no_telp','$nomor_pks', '$ruang_lingkup', '$tanggal_awal_converted', '$tanggal_akhir_converted', '$tahun', '$link_pks', '$status', '$pic')";
 
                 if ($koneksi->query($sql) !== TRUE) {
                     echo "Error: " . $sql . "<br>" . $koneksi->error;
@@ -178,6 +178,7 @@ if (isset($_POST["submit"])) {
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama</th>
+                                                <th>No. Telp</th>
                                                 <th>Nomor PKS</th>
                                                 <th>Ruang Lingkup</th>
                                                 <th>Tanggal Awal</th>
@@ -189,41 +190,56 @@ if (isset($_POST["submit"])) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php
-                                            // Sisipkan file koneksi.php
-                                            include 'koneksi.php';
+                                        <?php
+                                        // Sisipkan file koneksi.php
+                                        include 'koneksi.php';
 
-                                            $sql = "SELECT * FROM datapks";
-                                            $result = mysqli_query($koneksi, $sql);
+                                        $sql = "SELECT * FROM datapks";
+                                        $result = mysqli_query($koneksi, $sql);
 
-                                            if (mysqli_num_rows($result) > 0) {
-                                                $nomor = 1;
-                                                while ($row = mysqli_fetch_assoc($result)) {
+                                        if (mysqli_num_rows($result) > 0) {
+                                            $nomor = 1;
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                // Mendapatkan tanggal akhir dan mengubahnya menjadi timestamp
+                                                $tanggal_akhir = strtotime($row['tanggal_akhir']);
+                                                $tanggal_sekarang = time();
+                                                $tanggal_jatuh_tempo = strtotime("+30 days", $tanggal_sekarang);
 
-                                                    echo "<tr>";
-                                                    echo "<td>" . $nomor . "</td>";
-                                                    echo "<td>" . $row['nama'] . "</td>";
-                                                    echo "<td>" . $row['nomor_pks'] . "</td>";
-                                                    echo "<td>" . $row['ruang_lingkup'] . "</td>";
-                                                    echo "<td>" . $row['tanggal_awal'] . "</td>";
-                                                    echo "<td>" . $row['tanggal_akhir'] . "</td>";
-                                                    echo "<td>" . $row['tahun'] . "</td>";
-                                                    echo "<td>" . $row['link_pks'] . "</td>";
-                                                    echo "<td>" . $row['status'] . "</td>";
-                                                    echo "<td>" . $row['pic'] . "</td>";
-                                                    echo "</tr>";
-                                                    $nomor++;
+                                                // Menentukan status
+                                                if ($tanggal_akhir > $tanggal_jatuh_tempo) {
+                                                    $status = "aktif";
+                                                } elseif ($tanggal_akhir <= $tanggal_jatuh_tempo && $tanggal_akhir > $tanggal_sekarang) {
+                                                    $status = "jatuh tempo";
+                                                } else {
+                                                    $status = "expired";
                                                 }
-                                            } else {
-                                                echo "<div class='row mt-4'>
-                                                <div class='col-md-12'>
-                                                    <div class='alert alert-warning text-center' role='alert'>
-                                                        Tidak ada data raw yang ditemukan.
-                                                    </div>
-                                                </div>
-                                            </div>";
+
+                                                echo "<tr>";
+                                                echo "<td>" . $nomor . "</td>";
+                                                echo "<td>" . $row['nama'] . "</td>";
+                                                echo "<td>" . $row['no_telp'] . "</td>";
+                                                echo "<td>" . $row['nomor_pks'] . "</td>";
+                                                echo "<td>" . $row['ruang_lingkup'] . "</td>";
+                                                echo "<td>" . $row['tanggal_awal'] . "</td>";
+                                                echo "<td>" . $row['tanggal_akhir'] . "</td>";
+                                                echo "<td>" . $row['tahun'] . "</td>";
+                                                echo "<td>" . $row['link_pks'] . "</td>";
+                                                echo "<td>" . $status . "</td>";  // Menggunakan status yang ditentukan
+                                                echo "<td>" . $row['pic'] . "</td>";
+                                                echo "</tr>";
+                                                $nomor++;
                                             }
-                                            ?>
+                                        } else {
+                                            echo "<div class='row mt-4'>
+                                            <div class='col-md-12'>
+                                                <div class='alert alert-warning text-center' role='alert'>
+                                                    Tidak ada data raw yang ditemukan.
+                                                </div>
+                                            </div>
+                                        </div>";
+                                        }
+                                        ?>
+
                                         </tbody>
                                     </table>
                                 </div>

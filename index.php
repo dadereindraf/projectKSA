@@ -78,18 +78,18 @@ $total_rows_expired = ($result_expired) ? mysqli_fetch_assoc($result_expired)['t
 // Menampilkan data ke dalam elemen card
 echo "
 <div class='row'>
-    <div class='col-md-6 col-xl-2'>
+    <div class='col-md-6 col-xl-4'>
         <div class='card'>
             <a href='dataRaw.php' style='text-decoration: none; color: inherit;'>
                 <div class='card-body'>
                     <h5 class='card-title'>Total Data PKS</h5>
-                    <p class='text-danger'><strong style='font-size: 30px;'>$total_rows_datapks</strong></p>
+                    <p><strong style='font-size: 30px;'>$total_rows_datapks</strong></p>
                 </div>
             </a>
         </div>
     </div>
 
-    <div class='col-md-6 col-xl-2'>
+    <div class='col-md-6 col-xl-4'>
         <div class='card'>
             <a href='dataAktif.php' style='text-decoration: none; color: inherit;'>
                 <div class='card-body'>
@@ -100,7 +100,7 @@ echo "
         </div>
     </div>
 
-    <div class='col-md-6 col-xl-2'>
+    <div class='col-md-6 col-xl-4'>
         <div class='card'>
             <a href='dataJatuhTempo.php' style='text-decoration: none; color: inherit;'>
                 <div class='card-body'>
@@ -111,7 +111,7 @@ echo "
         </div>
     </div>
 
-    <div class='col-md-6 col-xl-2'>
+    <div class='col-md-6 col-xl-4'>
         <div class='card'>
             <a href='dataExpired.php' style='text-decoration: none; color: inherit;'>
                 <div class='card-body'>
