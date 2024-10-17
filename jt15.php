@@ -82,7 +82,7 @@
                                         $tanggal_jatuh_tempo = date('Y-m-d', strtotime("15 days")); // 30 hari ke depan
 
                                         // Modifikasi query untuk mengambil data dengan status jatuh tempo
-                                        $sql = "SELECT * FROM datapks WHERE tanggal_akhir <= '$tanggal_jatuh_tempo' AND tanggal_akhir > '$tanggal_sekarang'";
+                                        $sql = "SELECT * FROM datapks WHERE tanggal_akhir = '$tanggal_jatuh_tempo'";
                                         $result = mysqli_query($koneksi, $sql);
 
                                         if (mysqli_num_rows($result) > 0) {
