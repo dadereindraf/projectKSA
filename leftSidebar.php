@@ -22,11 +22,24 @@
                 </li>
 
                 <li class="menu-title">Jatuh Tempo</li>
+                <li>
+                    <a href="jt45.php" class="waves-effect">
+                        <i class="mdi mdi-police-badge"></i>
+                        <span> 45 Hari </span>
+                    </a>
+                </li>
                 
                 <li>
                     <a href="jt30.php" class="waves-effect">
                         <i class="mdi mdi-police-badge"></i>
                         <span> 30 Hari </span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="jt15.php" class="waves-effect">
+                        <i class="mdi mdi-police-badge"></i>
+                        <span> 15 Hari </span>
                     </a>
                 </li>
             </ul>

@@ -123,32 +123,32 @@ if (isset($_POST["submit"])) {
             $file = fopen($target_file, "r");
 
             // Lakukan operasi INSERT SQL ke dalam tabel database
-            while (($data = fgetcsv($file, 1000, ";")) !== FALSE) {
+            while (($data = fgetcsv($file, 1000, ",")) !== FALSE) {
                 // Melewati baris pertama yang berisi nama kolom
                 if ($firstRowSkipped === false) {
                     $firstRowSkipped = true;
                     continue; // Skip baris ini dan lanjutkan ke baris berikutnya
                 }
 
-                // Masukkan data ke dalam tabel database
-                $nama = $data[0];
-                $nomor_pks = $data[1];
-                $ruang_lingkup = $data[2];
-                $tanggal_awal = $data[3];
-                $tanggal_akhir = $data[4];
+                // Bersihkan data yang diambil dari CSV
+                $nama = mysqli_real_escape_string($koneksi, $data[0]);
+                $no_telp = isset($data[1]) ? mysqli_real_escape_string($koneksi, $data[1]) : ''; // Handle kosong
+                $nomor_pks = mysqli_real_escape_string($koneksi, $data[2]);
+                $ruang_lingkup = mysqli_real_escape_string($koneksi, $data[3]);
+                $tanggal_awal = mysqli_real_escape_string($koneksi, $data[4]);
+                $tanggal_akhir = mysqli_real_escape_string($koneksi, $data[5]);
+                $tahun = mysqli_real_escape_string($koneksi, $data[6]);
+                $link_pks = mysqli_real_escape_string($koneksi, $data[7]);
+                $status = mysqli_real_escape_string($koneksi, $data[8]);
+                $pic = isset($data[9]) ? mysqli_real_escape_string($koneksi, $data[9]) : ''; // Handle kosong
 
                 // Konversi format tanggal dari DD/MM/YYYY ke YYYY-MM-DD
                 $tanggal_awal_converted = date("Y-m-d", strtotime(str_replace('/', '-', $tanggal_awal)));
                 $tanggal_akhir_converted = date("Y-m-d", strtotime(str_replace('/', '-', $tanggal_akhir)));
 
-                $tahun = $data[5];
-                $link_pks = $data[6];
-                $status = $data[7];
-                $pic = $data[8];
-
                 // Lakukan operasi INSERT SQL ke dalam tabel database
                 $sql = "INSERT INTO datapks (nama, no_telp, nomor_pks, ruang_lingkup, tanggal_awal, tanggal_akhir, tahun, link_pks, status, pic) 
-                        VALUES ('$nama', '$no_telp','$nomor_pks', '$ruang_lingkup', '$tanggal_awal_converted', '$tanggal_akhir_converted', '$tahun', '$link_pks', '$status', '$pic')";
+                        VALUES ('$nama', '$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_awal_converted', '$tanggal_akhir_converted', '$tahun', '$link_pks', '$status', '$pic')";
 
                 if ($koneksi->query($sql) !== TRUE) {
                     echo "Error: " . $sql . "<br>" . $koneksi->error;
@@ -161,6 +161,7 @@ if (isset($_POST["submit"])) {
     }
 }
 ?>
+
 
 
                             </div>
@@ -203,7 +204,7 @@ if (isset($_POST["submit"])) {
                                                 // Mendapatkan tanggal akhir dan mengubahnya menjadi timestamp
                                                 $tanggal_akhir = strtotime($row['tanggal_akhir']);
                                                 $tanggal_sekarang = time();
-                                                $tanggal_jatuh_tempo = strtotime("+30 days", $tanggal_sekarang);
+                                                $tanggal_jatuh_tempo = strtotime("+45 days", $tanggal_sekarang);
 
                                                 // Menentukan status
                                                 if ($tanggal_akhir > $tanggal_jatuh_tempo) {

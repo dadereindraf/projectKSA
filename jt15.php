@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Tokenization</title>
+    <title>Jatuh Tempo 15</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">>
     <!-- App favicon -->
     <link rel="shortcut icon" href="assets/images/logoUBL.png">
@@ -53,7 +53,7 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">Jatuh Tempo 30 Hari</h5>
+                                    <h5 class="card-title">Jatuh Tempo 15 Hari</h5>
 
                                     <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                         <thead>
@@ -79,7 +79,7 @@
 
                                         // Mendapatkan tanggal hari ini dan tanggal jatuh tempo
                                         $tanggal_sekarang = date('Y-m-d'); // Format YYYY-MM-DD
-                                        $tanggal_jatuh_tempo = date('Y-m-d', strtotime("30 days")); // 30 hari ke depan
+                                        $tanggal_jatuh_tempo = date('Y-m-d', strtotime("15 days")); // 30 hari ke depan
 
                                         // Modifikasi query untuk mengambil data dengan status jatuh tempo
                                         $sql = "SELECT * FROM datapks WHERE tanggal_akhir <= '$tanggal_jatuh_tempo' AND tanggal_akhir > '$tanggal_sekarang'";
@@ -120,7 +120,7 @@
                                             echo "<div class='row mt-4'>
                                             <div class='col-md-12'>
                                                 <div class='alert alert-warning text-center' role='alert'>
-                                                    Tidak ada data jatuh tempo dalam 30 hari yang ditemukan.
+                                                    Tidak ada data jatuh tempo dalam 15 hari yang ditemukan.
                                                 </div>
                                             </div>
                                         </div>";
