@@ -211,7 +211,7 @@
             var message = encodeURIComponent(
                 "Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.\n"+ 
                 "Dengan hormat"+",\n\n" +
-                "Masa berlaku kerjasama PKS dengan *" + nomor_pks + "* tentang *" +ruang_lingkup+ "* akan berakhir pada tanggal *" +tanggalAkhir+ "*, mohon kerjsamanya untuk menindaklanjuti PKS ini.\n\n"+
+                "Masa berlaku kerjasama PKS dengan *" + nomor_pks + "* tentang *" +ruang_lingkup+ "* akan berakhir pada tanggal *" +tanggalAkhir+ "* atau 15 hari lagi, mohon kerjsamanya untuk menindaklanjuti PKS ini.\n\n"+
                 "Diharapkan semua kewajiban pihak pertama maupun pihak kedua dapat diselesaikan sebelum tanggal berakhir PKS.\n\n"+
                 "Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir) dan membalas pesan ini melalui email ataupun WA serta melakukan upload di https://bit.ly/DOCPKSKSA\n\n"+
                 "Jika ada pertanyaan lebih lanjut mengenai hal ini, dapat menghubungi tim tata kelola\n\n"+

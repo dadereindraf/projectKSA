@@ -105,14 +105,13 @@
                                                 echo "<td>" . $row['pic'] . "</td>";
 
                                                 // Menambahkan tombol Kirim Reminder PKS
-                                                $no_telp = urlencode($row['no_telp']); // Encode nomor telepon untuk URL
-                                                $nama = urlencode($row['nama']); // Encode nama untuk URL
-                                                $tanggal_awal = urlencode($row['tanggal_awal']); // Encode tanggal awal untuk URL
-                                                $tanggal_akhir = urlencode($row['tanggal_akhir']); // Encode tanggal akhir untuk URL
-                                                
+                                                $no_telp = $row['no_telp']; // Tidak perlu encode lagi di sini
+                                                $nomor_pks = $row['nomor_pks']; 
+                                                $ruang_lingkup = $row['ruang_lingkup']; 
+                                                $tanggal_akhir = $row['tanggal_akhir']; 
                                                 // Tombol dengan onClick
-                                                echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nama', '$tanggal_awal', '$tanggal_akhir')\" class='btn btn-success'>Kirim Reminder PKS</button></td>";
-
+                                                echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_akhir')\" class='btn btn-success'>Kirim Reminder PKS</button></td>";
+                                                
                                                 echo "</tr>";
                                                 $nomor++;
                                             }
@@ -208,22 +207,17 @@
     <script src="assets/js/app.js"></script>
 
     <script>
-        function openWhatsApp(phoneNumber, nama, tanggalAwal, tanggalAkhir) {
+        function openWhatsApp(phoneNumber, nomor_pks, ruang_lingkup, tanggalAkhir) {
             var message = encodeURIComponent(
-                "Halo " + nama + ",\n\n" +
-                "Saya harap pesan ini menemui Anda dalam keadaan baik.\n\n" +
-                "Sehubungan dengan Perjanjian Kerja Sama (PKS) yang telah kami tandatangani pada " + tanggalAwal + ", " +
-                "saya ingin mengingatkan bahwa masa berlaku PKS tersebut akan segera berakhir pada " + tanggalAkhir + ".\n\n" +
-                "Kami sangat menghargai kerja sama yang telah terjalin dan berharap untuk dapat melanjutkan hubungan ini ke depannya. " +
-                "Oleh karena itu, saya ingin mengusulkan perpanjangan PKS tersebut.\n\n" +
-                "Mohon konfirmasi dari pihak Anda mengenai kesediaan untuk melakukan perpanjangan dan jika ada yang " +
-                "perlu dibahas lebih lanjut, silakan jangan ragu untuk menghubungi saya.\n\n" +
-                "Terima kasih atas perhatian dan kerja sama Anda.\n\n" +
-                "Salam hormat,\n" +
-                "Mas Brian\n" +
-                "Karyawan KSA\n" +
-                "BPJS Ketenagakerjaan\n" +
-                "[Nomor Telepon/Email Mas Brian]"
+                "Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.\n"+ 
+                "Dengan hormat"+",\n\n" +
+                "Masa berlaku kerjasama PKS dengan *" + nomor_pks + "* tentang *" +ruang_lingkup+ "* akan berakhir pada tanggal *" +tanggalAkhir+ "*, mohon kerjsamanya untuk menindaklanjuti PKS ini.\n\n"+
+                "Diharapkan semua kewajiban pihak pertama maupun pihak kedua dapat diselesaikan sebelum tanggal berakhir PKS.\n\n"+
+                "Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir) dan membalas pesan ini melalui email ataupun WA serta melakukan upload di https://bit.ly/DOCPKSKSA\n\n"+
+                "Jika ada pertanyaan lebih lanjut mengenai hal ini, dapat menghubungi tim tata kelola\n\n"+
+                "Terima kasih atas perhatian dan kerjasamanya\n\n"+
+                "Hormat kami,\n\n\n"+
+                "Tim Tata Kelola"
             );
 
             var url = "https://wa.me/" + phoneNumber + "?text=" + message;
