@@ -6,18 +6,18 @@
             <div class="navbar-brand-box">
                 <a href="index.php" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="assets/images/logoUBL.png" height="30">
+                        <img src="assets/images/logobpjstk.png" height="30">
                     </span>
                     <span class="logo-lg">
-                        <img src="assets/images/logoUBL.png">
+                        <img src="assets/images/bpjstk.png">
                     </span>
                 </a>
                 <a href="index.php" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="assets/images/logoUBL.png" height="30">
+                        <img src="assets/images/logobpjstk.png" height="30">
                     </span>
                     <span class="logo-lg">
-                        <img src="assets/images/logoUBL.png">
+                        <img src="assets/images/bpjstk.png">
                     </span>
                 </a>
             </div>
