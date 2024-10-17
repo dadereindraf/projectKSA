@@ -42,6 +42,14 @@
                         <span> 15 Hari </span>
                     </a>
                 </li>
+
+                <li class="menu-title">Freeze</li>
+                <li>
+                    <a href="fz10.php" class="waves-effect">
+                        <i class="mdi mdi-police-badge"></i>
+                        <span> 10 Hari </span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
