@@ -24,11 +24,11 @@
 <body data-sidebar="dark">
 
     <!-- Loader -->
-    <div id="preloader">
+    <!-- <div id="preloader">
         <div id="status">
             <div class="spinner"></div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Begin page -->
     <div id="layout-wrapper">
@@ -62,10 +62,7 @@
                                                 <th>Nama</th>
                                                 <th>No. Telp</th>
                                                 <th>Nomor PKS</th>
-                                                <!-- <th>Ruang Lingkup</th>
-                                                <th>Tanggal Awal</th> -->
                                                 <th>Tanggal Akhir</th>
-                                                <!-- <th>Tahun</th> -->
                                                 <th>Link PKS</th>
                                                 <th>Status</th>
                                                 <th>PIC</th>
@@ -76,10 +73,15 @@
                                         <?php
                                         // Sisipkan file koneksi.php
                                         include 'koneksi.php';
+                                        include 'vendor/autoload.php'; // Memuat PHPMailer
+
+                                        use PHPMailer\PHPMailer\PHPMailer;
+                                        use PHPMailer\PHPMailer\Exception;
+
 
                                         // Mendapatkan tanggal hari ini dan tanggal jatuh tempo
                                         $tanggal_sekarang = date('Y-m-d'); // Format YYYY-MM-DD
-                                        $tanggal_jatuh_tempo = date('Y-m-d', strtotime("10 days")); // 30 hari ke depan
+                                        $tanggal_jatuh_tempo = date('Y-m-d', strtotime("10 days")); // 10 hari ke depan
 
                                         // Modifikasi query untuk mengambil data dengan status jatuh tempo
                                         $sql = "SELECT * FROM datapks WHERE tanggal_akhir = '$tanggal_jatuh_tempo'";
@@ -96,21 +98,20 @@
                                                 echo "<td>" . $row['nama'] . "</td>";
                                                 echo "<td>" . $row['no_telp'] . "</td>";
                                                 echo "<td>" . $row['nomor_pks'] . "</td>";
-                                                // echo "<td>" . $row['ruang_lingkup'] . "</td>";
-                                                // echo "<td>" . $row['tanggal_awal'] . "</td>";
                                                 echo "<td>" . $row['tanggal_akhir'] . "</td>";
-                                                // echo "<td>" . $row['tahun'] . "</td>";
                                                 echo "<td>" . $row['link_pks'] . "</td>";
-                                                echo "<td>" . $status . "</td>";  // Status tetap jatuh tempo
+                                                echo "<td>" . $status . "</td>";  
                                                 echo "<td>" . $row['pic'] . "</td>";
 
-                                                // Menambahkan tombol Kirim Reminder PKS
-                                                $no_telp = $row['no_telp']; // Tidak perlu encode lagi di sini
-                                                $nomor_pks = $row['nomor_pks']; 
-                                                $ruang_lingkup = $row['ruang_lingkup']; 
-                                                $tanggal_akhir = $row['tanggal_akhir']; 
-                                                // Tombol dengan onClick
+                                                // Tombol untuk WhatsApp
+                                                $no_telp = $row['no_telp'];
+                                                $nomor_pks = $row['nomor_pks'];
+                                                $ruang_lingkup = $row['ruang_lingkup'];
+                                                $tanggal_akhir = $row['tanggal_akhir'];
                                                 echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_akhir')\" class='btn btn-success'>Kirim Reminder PKS</button></td>";
+
+                                                // Tombol Email
+                                                echo "<td><form method='POST'><input type='hidden' name='email' value='{$row['email']}'><button type='submit' class='btn btn-danger'>Email</button></form></td>";
                                                 echo "</tr>";
                                                 $nomor++;
                                             }
@@ -123,9 +124,47 @@
                                             </div>
                                         </div>";
                                         }
+
+                                        // Logika untuk mengirim email
+                                        
+                                        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
+                                            
+                                            $email_penerima = $_POST['email'];
+                                            $mail = new PHPMailer(true);
+
+                                            try {
+                                                // Pengaturan server
+                                                $mail->isSMTP();
+                                                $mail->Host       = 'smtp.example.com'; // Ganti dengan server SMTP Anda
+                                                $mail->SMTPAuth   = true;
+                                                $mail->Username   = 'email@example.com'; // Email pengirim
+                                                $mail->Password   = 'password'; // Password email
+                                                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                                                $mail->Port       = 587;
+
+                                                // Pengaturan email
+                                                $mail->setFrom('email@example.com', 'Nama Pengirim');
+                                                $mail->addAddress($email_penerima);
+                                                $mail->addCC('cc1@example.com');
+                                                $mail->addCC('cc2@example.com');
+                                                $mail->addCC('cc3@example.com');
+
+                                                // Konten email
+                                                $mail->isHTML(true);
+                                                $mail->Subject = 'Reminder PKS';
+                                                $mail->Body    = 'Ini adalah pengingat untuk PKS yang akan jatuh tempo.';
+
+                                                // Kirim email
+                                                $mail->send();
+                                                echo 'Email berhasil dikirim';
+                                            } catch (Exception $e) {
+                                                echo "Email gagal dikirim. Error: {$mail->ErrorInfo}";
+                                            }
+                                        }
                                         ?>
                                         </tbody>
                                     </table>
+
 
                                 </div>
                             </div>
