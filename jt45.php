@@ -70,100 +70,108 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        <?php
-                                        // Sisipkan file koneksi.php
-                                        include 'koneksi.php';
-                                        include 'vendor/autoload.php'; // Memuat PHPMailer
+                                            <?php
+                                            include 'koneksi.php';
+                                            include 'vendor/autoload.php'; // Memuat PHPMailer
 
-                                        use PHPMailer\PHPMailer\PHPMailer;
-                                        use PHPMailer\PHPMailer\Exception;
+                                            use PHPMailer\PHPMailer\PHPMailer;
+                                            use PHPMailer\PHPMailer\Exception;
 
-                                        // Mendapatkan tanggal hari ini dan tanggal jatuh tempo
-                                        $tanggal_sekarang = date('Y-m-d'); // Format YYYY-MM-DD
-                                        $tanggal_jatuh_tempo = date('Y-m-d', strtotime("45 days")); // 10 hari ke depan
+                                            // Mendapatkan tanggal jatuh tempo
+                                            $tanggal_jatuh_tempo = date('Y-m-d', strtotime("45 days"));
 
-                                        // Modifikasi query untuk mengambil data dengan status jatuh tempo
-                                        $sql = "SELECT * FROM datapks WHERE tanggal_akhir = '$tanggal_jatuh_tempo'";
-                                        $result = mysqli_query($koneksi, $sql);
+                                            // Query untuk mengambil data jatuh tempo
+                                            $sql = "SELECT * FROM datapks WHERE tanggal_akhir = '$tanggal_jatuh_tempo'";
+                                            $result = mysqli_query($koneksi, $sql);
 
-                                        if (mysqli_num_rows($result) > 0) {
-                                            $nomor = 1;
-                                            while ($row = mysqli_fetch_assoc($result)) {
-                                                // Menentukan status jatuh tempo
-                                                $status = "jatuh tempo";
+                                            if (mysqli_num_rows($result) > 0) {
+                                                $nomor = 1;
+                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                    // Menentukan status jatuh tempo
+                                                    $status = "jatuh tempo";
 
-                                                echo "<tr>";
-                                                echo "<td>" . $nomor . "</td>";
-                                                echo "<td>" . $row['nama'] . "</td>";
-                                                echo "<td>" . $row['no_telp'] . "</td>";
-                                                echo "<td>" . $row['nomor_pks'] . "</td>";
-                                                echo "<td>" . $row['tanggal_akhir'] . "</td>";
-                                                echo "<td>" . $row['link_pks'] . "</td>";
-                                                echo "<td>" . $status . "</td>";  
-                                                echo "<td>" . $row['pic'] . "</td>";
-                                                echo "<td>" . $row['email1'] . "</td>";
+                                                    echo "<tr>";
+                                                    echo "<td>" . $nomor . "</td>";
+                                                    echo "<td>" . $row['nama'] . "</td>";
+                                                    echo "<td>" . $row['no_telp'] . "</td>";
+                                                    echo "<td>" . $row['nomor_pks'] . "</td>";
+                                                    echo "<td>" . $row['tanggal_akhir'] . "</td>";
+                                                    echo "<td>" . $row['link_pks'] . "</td>";
+                                                    echo "<td>" . $status . "</td>";
+                                                    echo "<td>" . $row['pic'] . "</td>";
 
-                                                // Tombol untuk WhatsApp
-                                                $no_telp = $row['no_telp'];
-                                                $nomor_pks = $row['nomor_pks'];
-                                                $ruang_lingkup = $row['ruang_lingkup'];
-                                                $tanggal_akhir = $row['tanggal_akhir'];
-                                                echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_akhir')\" class='btn btn-success'>Kirim Reminder PKS</button></td>";
+                                                    // Tombol untuk WhatsApp
+                                                    $no_telp = $row['no_telp'];
+                                                    $nomor_pks = $row['nomor_pks'];
+                                                    $ruang_lingkup = $row['ruang_lingkup'];
+                                                    $tanggal_akhir = $row['tanggal_akhir'];
+                                                    echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_akhir')\" class='btn btn-success'>Kirim Reminder PKS</button></td>";
 
-                                                // Tombol Email
-                                                echo "<td><form method='POST'><input type='hidden' name='email' value='{$row['email1']}'><button type='submit' class='btn btn-danger'>Email</button></form></td>";
-                                                echo "</tr>";
-                                                $nomor++;
+                                                    // Tombol Email dengan form POST
+                                                    // Tombol Email dengan form POST
+                                                    echo "<td>
+                                                        <form method='POST'>
+                                                            <input type='hidden' name='email1' value='{$row['email1']}'>
+                                                            <input type='hidden' name='email2' value='{$row['email2']}'>
+                                                            <input type='hidden' name='email3' value='{$row['email3']}'>
+                                                            <button type='submit' class='btn btn-danger' name='send_email'>Email</button>
+                                                        </form>
+                                                        </td>";
+                                                    echo "</tr>";
+
+                                                    echo "</tr>";
+                                                    $nomor++;
+                                                }
+                                            } else {
+                                                echo "<div class='alert alert-warning text-center' role='alert'>Tidak ada data jatuh tempo dalam 45 hari yang ditemukan.</div>";
                                             }
-                                        } else {
-                                            echo "<div class='row mt-4'>
-                                            <div class='col-md-12'>
-                                                <div class='alert alert-warning text-center' role='alert'>
-                                                    Tidak ada data jatuh tempo dalam 45 hari yang ditemukan.
-                                                </div>
-                                            </div>
-                                        </div>";
-                                        }
 
-                                        // Logika untuk mengirim email
-                                        
-                                        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
-                                            
-                                            $email_penerima = $_POST['email'];
-                                            $mail = new PHPMailer(true);
+                                            // Logika untuk mengirim email
+                                            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_email'])) {
+                                                $email_penerima1 = $_POST['email1'];
+                                                $email_penerima2 = $_POST['email2'];
+                                                $email_penerima3 = $_POST['email3'];
 
-                                            try {
-                                                // Pengaturan server
-                                                $mail->isSMTP();
-                                                $mail->Host       = 'smtp.gmail.com'; // Ganti dengan server SMTP Anda
-                                                $mail->SMTPAuth   = true;
-                                                $mail->Username   = 'lyshakaera@gmail.com'; // Email pengirim
-                                                $mail->Password   = '085312365114'; // Password email
-                                                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                                                $mail->Port       = 587;
+                                                $mail = new PHPMailer(true);
 
-                                                // Pengaturan email
-                                                $mail->setFrom('email@gmail.com', 'Nama Pengirim');
-                                                $mail->addAddress($email_penerima);
-                                                $mail->addCC('cc1@gmail.com');
-                                                $mail->addCC('cc2@gmail.com');
-                                                $mail->addCC('cc3@gmail.com');
+                                                try {
+                                                    // Pengaturan server Gmail
+                                                    $mail->isSMTP();
+                                                    $mail->Host       = 'smtp.gmail.com';
+                                                    $mail->SMTPAuth   = true;
+                                                    $mail->Username   = 'lyshakaera@gmail.com'; // Email pengirim
+                                                    $mail->Password   = 'kscj lfsb wlec gsxn'; // Gunakan App Password Gmail
+                                                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                                                    $mail->Port       = 587;
 
-                                                // Konten email
-                                                $mail->isHTML(true);
-                                                $mail->Subject = 'Reminder PKS';
-                                                $mail->Body    = 'Ini adalah pengingat untuk PKS yang akan jatuh tempo.';
+                                                    // Pengaturan email
+                                                    $mail->setFrom('lyshakaera@gmail.com', 'Nama Pengirim');
 
-                                                // Kirim email
-                                                $mail->send();
-                                                echo 'Email berhasil dikirim';
-                                            } catch (Exception $e) {
-                                                echo "Email gagal dikirim. Error: {$mail->ErrorInfo}";
+                                                    // Menambahkan penerima
+                                                    $mail->addAddress($email_penerima1);
+                                                    if (!empty($email_penerima2)) {
+                                                        $mail->addAddress($email_penerima2);
+                                                    }
+                                                    if (!empty($email_penerima3)) {
+                                                        $mail->addAddress($email_penerima3);
+                                                    }
+
+                                                    // Konten email
+                                                    $mail->isHTML(true);
+                                                    $mail->Subject = 'Reminder PKS';
+                                                    $mail->Body    = 'Ini adalah pengingat untuk PKS yang akan jatuh tempo.';
+
+                                                    // Kirim email
+                                                    $mail->send();
+                                                    echo '<div class="alert alert-success">Email berhasil dikirim</div>';
+                                                } catch (Exception $e) {
+                                                    echo '<div class="alert alert-danger">Email gagal dikirim. Error: ' . $mail->ErrorInfo . '</div>';
+                                                }
                                             }
-                                        }
-                                        ?>
+                                            ?>
                                         </tbody>
                                     </table>
+
 
                                 </div>
                             </div>
@@ -246,14 +254,14 @@
     <script>
         function openWhatsApp(phoneNumber, nomor_pks, ruang_lingkup, tanggalAkhir) {
             var message = encodeURIComponent(
-                "Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.\n"+ 
-                "Dengan hormat"+",\n\n" +
-                "Masa berlaku kerjasama PKS dengan *" + nomor_pks + "* tentang *" +ruang_lingkup+ "* akan berakhir pada tanggal *" +tanggalAkhir+ "*, mohon kerjsamanya untuk menindaklanjuti PKS ini.\n\n"+
-                "Diharapkan semua kewajiban pihak pertama maupun pihak kedua dapat diselesaikan sebelum tanggal berakhir PKS.\n\n"+
-                "Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir) dan membalas pesan ini melalui email ataupun WA serta melakukan upload di https://bit.ly/DOCPKSKSA\n\n"+
-                "Jika ada pertanyaan lebih lanjut mengenai hal ini, dapat menghubungi tim tata kelola\n\n"+
-                "Terima kasih atas perhatian dan kerjasamanya\n\n"+
-                "Hormat kami,\n\n\n"+
+                "Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.\n" +
+                "Dengan hormat" + ",\n\n" +
+                "Masa berlaku kerjasama PKS dengan *" + nomor_pks + "* tentang *" + ruang_lingkup + "* akan berakhir pada tanggal *" + tanggalAkhir + "*, mohon kerjsamanya untuk menindaklanjuti PKS ini.\n\n" +
+                "Diharapkan semua kewajiban pihak pertama maupun pihak kedua dapat diselesaikan sebelum tanggal berakhir PKS.\n\n" +
+                "Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir) dan membalas pesan ini melalui email ataupun WA serta melakukan upload di https://bit.ly/DOCPKSKSA\n\n" +
+                "Jika ada pertanyaan lebih lanjut mengenai hal ini, dapat menghubungi tim tata kelola\n\n" +
+                "Terima kasih atas perhatian dan kerjasamanya\n\n" +
+                "Hormat kami,\n\n\n" +
                 "Tim Tata Kelola"
             );
 
