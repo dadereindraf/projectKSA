@@ -108,7 +108,7 @@
                                                 $nomor_pks = $row['nomor_pks'];
                                                 $ruang_lingkup = $row['ruang_lingkup'];
                                                 $tanggal_akhir = $row['tanggal_akhir'];
-                                                echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_akhir')\" class='btn btn-success'>Kirim Reminder PKS</button></td>";
+                                                echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_akhir')\" class='btn btn-success'>Whatsapp</button></td>";
 
                                                 // Tombol Email
                                                 echo "<td><form method='POST'><input type='hidden' name='email' value='{$row['email']}'><button type='submit' class='btn btn-danger'>Email</button></form></td>";

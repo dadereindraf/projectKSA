@@ -110,7 +110,7 @@
                                                 $ruang_lingkup = $row['ruang_lingkup']; 
                                                 $tanggal_akhir = $row['tanggal_akhir']; 
                                                 // Tombol dengan onClick
-                                                echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_akhir')\" class='btn btn-success'>Kirim Reminder PKS</button></td>";
+                                                echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_akhir')\" class='btn btn-success'>Whatsapp</button></td>";
 
                                                 echo "</tr>";
                                                 $nomor++;

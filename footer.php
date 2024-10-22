@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-sm-right d-none d-sm-block">
-                    Crafted with <i class="mdi mdi-heart text-danger"></i> by KSA
+                    Crafted with <i class="mdi mdi-heart text-danger"></i> by KSA Intern <strong>Budi Luhur University</strong>
                 </div>
             </div>
         </div>

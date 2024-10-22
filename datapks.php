@@ -98,69 +98,69 @@
 
 
                                 <?php
-include 'koneksi.php';
+                                include 'koneksi.php';
 
-if (isset($_POST["submit"])) {
-    $target_dir = "uploads/";
-    $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-    $uploadOk = 1;
-    $firstRowSkipped = false;
-    $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                                if (isset($_POST["submit"])) {
+                                    $target_dir = "uploads/";
+                                    $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+                                    $uploadOk = 1;
+                                    $firstRowSkipped = false;
+                                    $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-    // Hanya izinkan file CSV
-    if ($fileType != "csv") {
-        echo "Hanya file CSV yang diperbolehkan.";
-        $uploadOk = 0;
-    }
+                                    // Hanya izinkan file CSV
+                                    if ($fileType != "csv") {
+                                        echo "Hanya file CSV yang diperbolehkan.";
+                                        $uploadOk = 0;
+                                    }
 
-    if ($uploadOk == 0) {
-        echo "Unggahan file gagal.";
-    } else {
-        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-            echo "File " . basename($_FILES["fileToUpload"]["name"]) . " berhasil diunggah.";
+                                    if ($uploadOk == 0) {
+                                        echo "Unggahan file gagal.";
+                                    } else {
+                                        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+                                            echo "File " . basename($_FILES["fileToUpload"]["name"]) . " berhasil diunggah.";
 
-            // Proses file CSV dan simpan ke database
-            $file = fopen($target_file, "r");
+                                            // Proses file CSV dan simpan ke database
+                                            $file = fopen($target_file, "r");
 
-            // Lakukan operasi INSERT SQL ke dalam tabel database
-            while (($data = fgetcsv($file, 1000, ",")) !== FALSE) {
-                // Melewati baris pertama yang berisi nama kolom
-                if ($firstRowSkipped === false) {
-                    $firstRowSkipped = true;
-                    continue; // Skip baris ini dan lanjutkan ke baris berikutnya
-                }
+                                            // Lakukan operasi INSERT SQL ke dalam tabel database
+                                            while (($data = fgetcsv($file, 1000, ",")) !== FALSE) {
+                                                // Melewati baris pertama yang berisi nama kolom
+                                                if ($firstRowSkipped === false) {
+                                                    $firstRowSkipped = true;
+                                                    continue; // Skip baris ini dan lanjutkan ke baris berikutnya
+                                                }
 
-                // Bersihkan data yang diambil dari CSV
-                $nama = mysqli_real_escape_string($koneksi, $data[0]);
-                $no_telp = isset($data[1]) ? mysqli_real_escape_string($koneksi, $data[1]) : ''; // Handle kosong
-                $nomor_pks = mysqli_real_escape_string($koneksi, $data[2]);
-                $ruang_lingkup = mysqli_real_escape_string($koneksi, $data[3]);
-                $tanggal_awal = mysqli_real_escape_string($koneksi, $data[4]);
-                $tanggal_akhir = mysqli_real_escape_string($koneksi, $data[5]);
-                $tahun = mysqli_real_escape_string($koneksi, $data[6]);
-                $link_pks = mysqli_real_escape_string($koneksi, $data[7]);
-                $status = mysqli_real_escape_string($koneksi, $data[8]);
-                $pic = isset($data[9]) ? mysqli_real_escape_string($koneksi, $data[9]) : ''; // Handle kosong
+                                                // Bersihkan data yang diambil dari CSV
+                                                $nama = mysqli_real_escape_string($koneksi, $data[0]);
+                                                $no_telp = isset($data[1]) ? mysqli_real_escape_string($koneksi, $data[1]) : ''; // Handle kosong
+                                                $nomor_pks = mysqli_real_escape_string($koneksi, $data[2]);
+                                                $ruang_lingkup = mysqli_real_escape_string($koneksi, $data[3]);
+                                                $tanggal_awal = mysqli_real_escape_string($koneksi, $data[4]);
+                                                $tanggal_akhir = mysqli_real_escape_string($koneksi, $data[5]);
+                                                $tahun = mysqli_real_escape_string($koneksi, $data[6]);
+                                                $link_pks = mysqli_real_escape_string($koneksi, $data[7]);
+                                                $status = mysqli_real_escape_string($koneksi, $data[8]);
+                                                $pic = isset($data[9]) ? mysqli_real_escape_string($koneksi, $data[9]) : ''; // Handle kosong
 
-                // Konversi format tanggal dari DD/MM/YYYY ke YYYY-MM-DD
-                $tanggal_awal_converted = date("Y-m-d", strtotime(str_replace('/', '-', $tanggal_awal)));
-                $tanggal_akhir_converted = date("Y-m-d", strtotime(str_replace('/', '-', $tanggal_akhir)));
+                                                // Konversi format tanggal dari DD/MM/YYYY ke YYYY-MM-DD
+                                                $tanggal_awal_converted = date("Y-m-d", strtotime(str_replace('/', '-', $tanggal_awal)));
+                                                $tanggal_akhir_converted = date("Y-m-d", strtotime(str_replace('/', '-', $tanggal_akhir)));
 
-                // Lakukan operasi INSERT SQL ke dalam tabel database
-                $sql = "INSERT INTO datapks (nama, no_telp, nomor_pks, ruang_lingkup, tanggal_awal, tanggal_akhir, tahun, link_pks, status, pic) 
+                                                // Lakukan operasi INSERT SQL ke dalam tabel database
+                                                $sql = "INSERT INTO datapks (nama, no_telp, nomor_pks, ruang_lingkup, tanggal_awal, tanggal_akhir, tahun, link_pks, status, pic) 
                         VALUES ('$nama', '$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_awal_converted', '$tanggal_akhir_converted', '$tahun', '$link_pks', '$status', '$pic')";
 
-                if ($koneksi->query($sql) !== TRUE) {
-                    echo "Error: " . $sql . "<br>" . $koneksi->error;
-                }
-            }
-            fclose($file);
-        } else {
-            echo "Maaf, terjadi kesalahan saat mengunggah file.";
-        }
-    }
-}
-?>
+                                                if ($koneksi->query($sql) !== TRUE) {
+                                                    echo "Error: " . $sql . "<br>" . $koneksi->error;
+                                                }
+                                            }
+                                            fclose($file);
+                                        } else {
+                                            echo "Maaf, terjadi kesalahan saat mengunggah file.";
+                                        }
+                                    }
+                                }
+                                ?>
 
 
 
@@ -191,55 +191,55 @@ if (isset($_POST["submit"])) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        <?php
-                                        // Sisipkan file koneksi.php
-                                        include 'koneksi.php';
+                                            <?php
+                                            // Sisipkan file koneksi.php
+                                            include 'koneksi.php';
 
-                                        $sql = "SELECT * FROM datapks";
-                                        $result = mysqli_query($koneksi, $sql);
+                                            $sql = "SELECT * FROM datapks";
+                                            $result = mysqli_query($koneksi, $sql);
 
-                                        if (mysqli_num_rows($result) > 0) {
-                                            $nomor = 1;
-                                            while ($row = mysqli_fetch_assoc($result)) {
-                                                // Mendapatkan tanggal akhir dan mengubahnya menjadi timestamp
-                                                $tanggal_akhir = strtotime($row['tanggal_akhir']);
-                                                $tanggal_sekarang = time();
-                                                $tanggal_jatuh_tempo = strtotime("+45 days", $tanggal_sekarang);
+                                            if (mysqli_num_rows($result) > 0) {
+                                                $nomor = 1;
+                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                    // Mendapatkan tanggal akhir dan mengubahnya menjadi timestamp
+                                                    $tanggal_akhir = strtotime($row['tanggal_akhir']);
+                                                    $tanggal_sekarang = time();
+                                                    $tanggal_jatuh_tempo = strtotime("+45 days", $tanggal_sekarang);
 
-                                                // Menentukan status
-                                                if ($tanggal_akhir > $tanggal_jatuh_tempo) {
-                                                    $status = "aktif";
-                                                } elseif ($tanggal_akhir <= $tanggal_jatuh_tempo && $tanggal_akhir > $tanggal_sekarang) {
-                                                    $status = "jatuh tempo";
-                                                } else {
-                                                    $status = "expired";
+                                                    // Menentukan status
+                                                    if ($tanggal_akhir > $tanggal_jatuh_tempo) {
+                                                        $status = "aktif";
+                                                    } elseif ($tanggal_akhir <= $tanggal_jatuh_tempo && $tanggal_akhir > $tanggal_sekarang) {
+                                                        $status = "jatuh tempo";
+                                                    } else {
+                                                        $status = "expired";
+                                                    }
+
+                                                    echo "<tr>";
+                                                    echo "<td>" . $nomor . "</td>";
+                                                    echo "<td>" . $row['nama'] . "</td>";
+                                                    echo "<td>" . $row['no_telp'] . "</td>";
+                                                    echo "<td>" . $row['nomor_pks'] . "</td>";
+                                                    echo "<td>" . $row['ruang_lingkup'] . "</td>";
+                                                    echo "<td>" . $row['tanggal_awal'] . "</td>";
+                                                    echo "<td>" . $row['tanggal_akhir'] . "</td>";
+                                                    echo "<td>" . $row['tahun'] . "</td>";
+                                                    echo "<td>" . $row['link_pks'] . "</td>";
+                                                    echo "<td>" . $status . "</td>";  // Menggunakan status yang ditentukan
+                                                    echo "<td>" . $row['pic'] . "</td>";
+                                                    echo "</tr>";
+                                                    $nomor++;
                                                 }
-
-                                                echo "<tr>";
-                                                echo "<td>" . $nomor . "</td>";
-                                                echo "<td>" . $row['nama'] . "</td>";
-                                                echo "<td>" . $row['no_telp'] . "</td>";
-                                                echo "<td>" . $row['nomor_pks'] . "</td>";
-                                                echo "<td>" . $row['ruang_lingkup'] . "</td>";
-                                                echo "<td>" . $row['tanggal_awal'] . "</td>";
-                                                echo "<td>" . $row['tanggal_akhir'] . "</td>";
-                                                echo "<td>" . $row['tahun'] . "</td>";
-                                                echo "<td>" . $row['link_pks'] . "</td>";
-                                                echo "<td>" . $status . "</td>";  // Menggunakan status yang ditentukan
-                                                echo "<td>" . $row['pic'] . "</td>";
-                                                echo "</tr>";
-                                                $nomor++;
-                                            }
-                                        } else {
-                                            echo "<div class='row mt-4'>
+                                            } else {
+                                                echo "<div class='row mt-4'>
                                             <div class='col-md-12'>
                                                 <div class='alert alert-warning text-center' role='alert'>
                                                     Tidak ada data raw yang ditemukan.
                                                 </div>
                                             </div>
                                         </div>";
-                                        }
-                                        ?>
+                                            }
+                                            ?>
 
                                         </tbody>
                                     </table>
