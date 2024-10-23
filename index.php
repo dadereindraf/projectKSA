@@ -103,7 +103,7 @@
                                 <div class='card h-100'>
                                     <a href='datapks.php' style='text-decoration: none; color: inherit;'>
                                         <div class='card-body'>
-                                            <h5 class='card-title'>Data Jatuh Tempo</h5>
+                                            <h5 class='card-title'>Data Jatuh Tempo H-45</h5>
                                             <p class='text-warning'><strong style='font-size: 30px;'>$total_rows_jatuh_tempo</strong></p>
                                         </div>
                                     </a>
@@ -120,7 +120,68 @@
                                     </a>
                                 </div>
                             </div>
+
                             ";
+                        ?>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title">Grafik PKS</h5>
+                                    <canvas id='barChart' width='100%' height='50'></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title">Grafik PKS Pie Chart</h5>
+                                    <canvas id='pieChart' width='400' height='250'></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <?php
+
+                        // Menghitung jumlah data berdasarkan tahun dari tanggal_akhir
+                        $query_tahun = "SELECT YEAR(tanggal_akhir) AS tahun, COUNT(*) AS total
+                                    FROM datapks
+                                    GROUP BY YEAR(tanggal_akhir)
+                                    ORDER BY tahun ASC
+                                    ";
+
+                        $result_tahun = mysqli_query($koneksi, $query_tahun);
+                        $tahun_data = [];
+                        $total_data = [];
+
+                        if ($result_tahun) {
+                            while ($row = mysqli_fetch_assoc($result_tahun)) {
+                                $tahun_data[] = $row['tahun'];
+                                $total_data[] = $row['total'];
+                            }
+                        } else {
+                            echo "Error: " . mysqli_error($koneksi);
+                        }
+
+                        // Konversi array PHP ke format JSON untuk Chart.js
+                        $tahun_json = json_encode($tahun_data);
+                        $total_json = json_encode($total_data);
+
+                        echo "
+                            <div class='col-xl-6'>
+                                <div class='card mb-4'>
+                                    <div class='card-body'>
+                                        <h5 class='card-title'>Grafik PKS Per Tahun</h5>
+                                        <canvas id='yearbarChart' width='100%' height='50'></canvas> <!-- Canvas untuk grafik batang -->
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        ";
                         ?>
                     </div>
 
@@ -174,6 +235,93 @@
     <script src="assets/js/pages/dashboard.init.js"></script>
 
     <script src="assets/js/app.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Bar Chart
+        var ctxBar = document.getElementById('barChart').getContext('2d');
+        var barChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Aktif', 'Jatuh Tempo', 'Expired'],
+                datasets: [{
+                    label: 'Jumlah Data',
+                    data: [<?php echo $total_rows_aktif; ?>, <?php echo $total_rows_jatuh_tempo; ?>, <?php echo $total_rows_expired; ?>],
+                    backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Pie Chart
+        var ctxPie = document.getElementById('pieChart').getContext('2d');
+        var pieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Aktif', 'Jatuh Tempo', 'Expired'],
+                datasets: [{
+                    data: [<?php echo $total_rows_aktif; ?>, <?php echo $total_rows_jatuh_tempo; ?>, <?php echo $total_rows_expired; ?>],
+                    backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Data dari PHP
+        const tahunData = <?php echo $tahun_json; ?>; // Label tahun
+        const totalData = <?php echo $total_json; ?>; // Data jumlah
+
+        // Menggambar grafik batang
+        const ctx = document.getElementById('yearbarChart').getContext('2d');
+        const yearBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: tahunData, // Label tahun
+                datasets: [{
+                    label: 'Jumlah Data PKS',
+                    data: totalData, // Data jumlah
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tahun'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+
 
 </body>
 

@@ -19,6 +19,33 @@
     <!-- App Css-->
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
 
+    <style>
+        .status-aktif {
+            background-color: #d4edda;
+            /* Hijau muda untuk "Aktif" */
+            color: #155724;
+            /* Warna teks hijau */
+        }
+
+        .status-jatuh-tempo {
+            background-color: #fff3cd;
+            /* Oranye muda untuk "Jatuh Tempo" */
+            color: #856404;
+            /* Warna teks oranye */
+        }
+
+        .status-expired {
+            background-color: gray;
+            /* Abu-abu muda untuk "Expired" */
+            color: #fff;
+            /* Warna teks merah */
+        }
+
+        th{
+            text-align: center;
+        }
+    </style>
+
 </head>
 
 <body data-sidebar="dark">
@@ -174,75 +201,82 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Data PKS</h5>
-                                    <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Nama</th>
-                                                <th>No. Telp</th>
-                                                <th>Nomor PKS</th>
-                                                <th>Ruang Lingkup</th>
-                                                <th>Tanggal Awal</th>
-                                                <th>Tanggal Akhir</th>
-                                                <th>Tahun</th>
-                                                <th>Link PKS</th>
-                                                <th>Status</th>
-                                                <th>PIC</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            // Sisipkan file koneksi.php
-                                            include 'koneksi.php';
+                                    <div class="table-responsive">
+                                        <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama</th>
+                                                    <th>No. Telp</th>
+                                                    <th>Nomor PKS</th>
+                                                    <th>Ruang Lingkup</th>
+                                                    <th>Tanggal Awal</th>
+                                                    <th>Tanggal Akhir</th>
+                                                    <th>Tahun</th>
+                                                    <th>Link PKS</th>
+                                                    <th>Status</th>
+                                                    <th>PIC</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                // Sisipkan file koneksi.php
+                                                include 'koneksi.php';
 
-                                            $sql = "SELECT * FROM datapks";
-                                            $result = mysqli_query($koneksi, $sql);
+                                                $sql = "SELECT * FROM datapks";
+                                                $result = mysqli_query($koneksi, $sql);
 
-                                            if (mysqli_num_rows($result) > 0) {
-                                                $nomor = 1;
-                                                while ($row = mysqli_fetch_assoc($result)) {
-                                                    // Mendapatkan tanggal akhir dan mengubahnya menjadi timestamp
-                                                    $tanggal_akhir = strtotime($row['tanggal_akhir']);
-                                                    $tanggal_sekarang = time();
-                                                    $tanggal_jatuh_tempo = strtotime("+45 days", $tanggal_sekarang);
+                                                if (mysqli_num_rows($result) > 0) {
+                                                    $nomor = 1;
+                                                    while ($row = mysqli_fetch_assoc($result)) {
+                                                        // Mendapatkan tanggal akhir dan mengubahnya menjadi timestamp
+                                                        $tanggal_akhir = strtotime($row['tanggal_akhir']);
+                                                        $tanggal_sekarang = time();
+                                                        $tanggal_jatuh_tempo = strtotime("+45 days", $tanggal_sekarang);
 
-                                                    // Menentukan status
-                                                    if ($tanggal_akhir > $tanggal_jatuh_tempo) {
-                                                        $status = "aktif";
-                                                    } elseif ($tanggal_akhir <= $tanggal_jatuh_tempo && $tanggal_akhir > $tanggal_sekarang) {
-                                                        $status = "jatuh tempo";
-                                                    } else {
-                                                        $status = "expired";
+                                                        // Menentukan status dan kelas untuk kolom status
+                                                        if ($tanggal_akhir > $tanggal_jatuh_tempo) {
+                                                            $status_class = "status-aktif";
+                                                            $status = "Aktif";
+                                                        } elseif ($tanggal_akhir <= $tanggal_jatuh_tempo && $tanggal_akhir > $tanggal_sekarang) {
+                                                            $status_class = "status-jatuh-tempo";
+                                                            $status = "Jatuh Tempo";
+                                                        } else {
+                                                            $status_class = "status-expired";
+                                                            $status = "Expired";
+                                                        }
+
+                                                        // Output tabel dengan kelas di kolom status
+                                                        echo "<tr>";
+                                                        echo "<td>" . $nomor . "</td>";
+                                                        echo "<td>" . $row['nama'] . "</td>";
+                                                        echo "<td>" . $row['no_telp'] . "</td>";
+                                                        echo "<td>" . $row['nomor_pks'] . "</td>";
+                                                        echo "<td>" . $row['ruang_lingkup'] . "</td>";
+                                                        echo "<td>" . $row['tanggal_awal'] . "</td>";
+                                                        echo "<td>" . $row['tanggal_akhir'] . "</td>";
+                                                        echo "<td>" . $row['tahun'] . "</td>";
+                                                        echo "<td><a href='" . $row['link_pks'] . "' target='_blank'>Link PKS</a></td>";
+                                                        echo "<td class='$status_class'>" . $status . "</td>";  // Menerapkan kelas status
+                                                        echo "<td>" . $row['pic'] . "</td>";
+                                                        echo "</tr>";
+                                                        $nomor++;
                                                     }
-
-                                                    echo "<tr>";
-                                                    echo "<td>" . $nomor . "</td>";
-                                                    echo "<td>" . $row['nama'] . "</td>";
-                                                    echo "<td>" . $row['no_telp'] . "</td>";
-                                                    echo "<td>" . $row['nomor_pks'] . "</td>";
-                                                    echo "<td>" . $row['ruang_lingkup'] . "</td>";
-                                                    echo "<td>" . $row['tanggal_awal'] . "</td>";
-                                                    echo "<td>" . $row['tanggal_akhir'] . "</td>";
-                                                    echo "<td>" . $row['tahun'] . "</td>";
-                                                    echo "<td>" . $row['link_pks'] . "</td>";
-                                                    echo "<td>" . $status . "</td>";  // Menggunakan status yang ditentukan
-                                                    echo "<td>" . $row['pic'] . "</td>";
-                                                    echo "</tr>";
-                                                    $nomor++;
-                                                }
-                                            } else {
-                                                echo "<div class='row mt-4'>
+                                                } else {
+                                                    echo "<div class='row mt-4'>
                                             <div class='col-md-12'>
                                                 <div class='alert alert-warning text-center' role='alert'>
                                                     Tidak ada data raw yang ditemukan.
                                                 </div>
                                             </div>
                                         </div>";
-                                            }
-                                            ?>
+                                                }
+                                                ?>
 
-                                        </tbody>
-                                    </table>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -321,6 +355,24 @@
         <script src="assets/js/pages/dashboard.init.js"></script>
 
         <script src="assets/js/app.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                // Cek apakah DataTable sudah diinisialisasi
+                if ($.fn.DataTable.isDataTable('#datatable')) {
+                    $('#datatable').DataTable().destroy(); // Hancurkan instance DataTables sebelumnya
+                }
+
+                // Inisialisasi DataTables
+                $('#datatable').DataTable({
+                    scrollX: true,
+                    paging: true,
+                    searching: true,
+                    lengthChange: true
+                });
+            });
+        </script>
+
 
 </body>
 
