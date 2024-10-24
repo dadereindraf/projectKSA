@@ -53,7 +53,7 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">Jatuh Tempo 10 Hari</h5>
+                                    <h5 class="card-title">Freeze 10 Hari</h5>
                                     <div class="table-responsive">
                                         <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
