@@ -229,8 +229,9 @@
     <script src="assets/js/app.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Bar Chart
+        // Bar Chart untuk status data (Aktif, Jatuh Tempo, Expired)
         var ctxBar = document.getElementById('barChart').getContext('2d');
         var barChart = new Chart(ctxBar, {
             type: 'bar',
@@ -239,8 +240,16 @@
                 datasets: [{
                     label: 'Jumlah Data',
                     data: [<?php echo $total_rows_aktif; ?>, <?php echo $total_rows_jatuh_tempo; ?>, <?php echo $total_rows_expired; ?>],
-                    backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 99, 132, 1)'],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.5)', // Hijau (Aktif)
+                        'rgba(255, 206, 86, 0.5)', // Kuning (Jatuh Tempo)
+                        'rgba(255, 99, 132, 0.5)' // Merah (Expired)
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)', // Hijau (Aktif)
+                        'rgba(255, 206, 86, 1)', // Kuning (Jatuh Tempo)
+                        'rgba(255, 99, 132, 1)' // Merah (Expired)
+                    ],
                     borderWidth: 1
                 }]
             },
@@ -253,41 +262,19 @@
             }
         });
 
-        // Pie Chart
-        var ctxPie = document.getElementById('pieChart').getContext('2d');
-        var pieChart = new Chart(ctxPie, {
-            type: 'pie',
-            data: {
-                labels: ['Aktif', 'Jatuh Tempo', 'Expired'],
-                datasets: [{
-                    data: [<?php echo $total_rows_aktif; ?>, <?php echo $total_rows_jatuh_tempo; ?>, <?php echo $total_rows_expired; ?>],
-                    backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(255, 99, 132, 1)'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: false,
-            }
-        });
-    </script>
+        // Grafik tahun
+        const tahunData = <?php echo $tahun_json; ?>;
+        const totalData = <?php echo $total_json; ?>;
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Data dari PHP
-        const tahunData = <?php echo $tahun_json; ?>; // Label tahun
-        const totalData = <?php echo $total_json; ?>; // Data jumlah
-
-        // Menggambar grafik batang
-        const ctx = document.getElementById('yearbarChart').getContext('2d');
-        const yearBarChart = new Chart(ctx, {
+        const ctxYear = document.getElementById('yearbarChart').getContext('2d');
+        const yearBarChart = new Chart(ctxYear, {
             type: 'bar',
             data: {
-                labels: tahunData, // Label tahun
+                labels: tahunData,
                 datasets: [{
                     label: 'Jumlah Data PKS',
-                    data: totalData, // Data jumlah
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    data: totalData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)', // Semua biru
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
                 }]
@@ -312,9 +299,6 @@
             }
         });
     </script>
-
-
-
 </body>
 
 </html>
