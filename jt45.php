@@ -131,9 +131,9 @@
                                                         // Tombol Email dengan form POST
                                                         echo "<td>
                                                         <form method='POST'>
-                                                            <input type='hidden' name='email1' value='{$row['emailPic']}'>
-                                                            <input type='hidden' name='email2' value='{$row['emailAsdep']}'>
-                                                            <input type='hidden' name='email3' value='{$row['emailDeputi']}'>
+                                                            <input type='hidden' name='emailPic' value='{$row['emailPic']}'>
+                                                            <input type='hidden' name='emailAsdep' value='{$row['emailAsdep']}'>
+                                                            <input type='hidden' name='emailDeputi' value='{$row['emailDeputi']}'>
                                                             <button type='submit' class='btn btn-danger' name='send_email'>Email</button>
                                                         </form>
                                                         </td>";
@@ -165,29 +165,64 @@
                                                         $mail->Port       = 587;
 
                                                         // Pengaturan email
-                                                        $mail->setFrom('lyshakaera@gmail.com', 'Nama Pengirim');
+                                                        $mail->setFrom('lyshakaera@gmail.com', 'Reminder PKS KSA');
 
                                                         // Menambahkan penerima
-                                                        $mail->addAddress($email_penerima1);
+                                                        $hasRecipient = false; // Menandakan ada penerima yang valid
+                                                        if (!empty($email_penerima1)) {
+                                                            $mail->addAddress($email_penerima1);
+                                                            $hasRecipient = true; // Ada penerima
+                                                        }
                                                         if (!empty($email_penerima2)) {
                                                             $mail->addAddress($email_penerima2);
+                                                            $hasRecipient = true; // Ada penerima
                                                         }
                                                         if (!empty($email_penerima3)) {
                                                             $mail->addAddress($email_penerima3);
+                                                            $hasRecipient = true; // Ada penerima
                                                         }
 
-                                                        // Konten email
-                                                        $mail->isHTML(true);
-                                                        $mail->Subject = 'Reminder PKS';
-                                                        $mail->Body    = 'Ini adalah pengingat untuk PKS yang akan jatuh tempo.';
+                                                        // Pastikan setidaknya satu alamat email ada sebelum mengirim
+                                                        if ($hasRecipient) {
+                                                            // Konten email
+                                                            $mail->isHTML(true);
+                                                            $mail->Subject = 'Reminder PKS';
+                                                            $mail->Body = "
+                                                                            <p><strong>Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.</strong></p>
+                                                                            <p>Dengan hormat,</p>
+                                                                            <p>
+                                                                                Masa berlaku kerjasama PKS dengan <strong>$nomorPks</strong> tentang <strong>$ruangLingkup</strong> 
+                                                                                akan berakhir pada tanggal <strong>$tanggalAkhir</strong>, mohon kerjasamanya untuk menindaklanjuti PKS ini.
+                                                                            </p>
+                                                                            <p>
+                                                                                Diharapkan semua kewajiban pihak pertama maupun pihak kedua dapat diselesaikan sebelum tanggal berakhir PKS.
+                                                                            </p>
+                                                                            <p>
+                                                                                Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir), 
+                                                                                mengupload dokumen yang sudah ditandatangani serta upload di <a href='https://bit.ly/DOCPKSKSA'>https://bit.ly/DOCPKSKSA</a> 
+                                                                                sesuai dengan nama folder mitra dan membalas pesan ini melalui email ataupun WA.
+                                                                            </p>
+                                                                            <p>
+                                                                                Jika ada pertanyaan lebih lanjut mengenai hal ini, dapat menghubungi tim tata kelola.
+                                                                            </p>
+                                                                            <p>
+                                                                                Terima kasih atas perhatian dan kerjasamanya.
+                                                                            </p>
+                                                                            <p>Hormat kami,</p>
+                                                                            <p><strong>Tim Tata Kelola</strong></p>
+                                                                        ";
 
-                                                        // Kirim email
-                                                        $mail->send();
-                                                        echo '<div class="alert alert-success">Email berhasil dikirim</div>';
+                                                            // Kirim email
+                                                            $mail->send();
+                                                            echo '<div class="alert alert-success">Email berhasil dikirim</div>';
+                                                        } else {
+                                                            echo '<div class="alert alert-warning">Tidak ada alamat email yang valid untuk dikirim.</div>';
+                                                        }
                                                     } catch (Exception $e) {
                                                         echo '<div class="alert alert-danger">Email gagal dikirim. Error: ' . $mail->ErrorInfo . '</div>';
                                                     }
                                                 }
+
                                                 ?>
                                             </tbody>
                                         </table>
@@ -274,7 +309,7 @@
     <script src="assets/js/app.js"></script>
 
     <script>
-        function openWhatsApp(phoneNumber, nomor_pks, ruang_lingkup, tanggalAkhir) {
+        function openWhatsApp(phoneNumber, nomorPks, ruangLingkup, tanggalAkhir) {
             // Menambahkan kode negara Indonesia (+62)
             if (phoneNumber.startsWith("0")) {
                 phoneNumber = phoneNumber.substring(1); // Menghapus angka 0 di awal jika ada
@@ -282,15 +317,15 @@
 
             // Mengencode pesan untuk URL
             var message = encodeURIComponent(
-                "Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.\n" +
+                "*Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.*\n\n" +
                 "Dengan hormat" + ",\n\n" +
-                "Masa berlaku kerjasama PKS dengan *" + nomor_pks + "* tentang *" + ruang_lingkup + "* akan berakhir pada tanggal *" + tanggalAkhir + "*, mohon kerjsamanya untuk menindaklanjuti PKS ini.\n\n" +
+                "Masa berlaku kerjasama PKS dengan *" + nomorPks + "* tentang *" + ruangLingkup + "* akan berakhir pada tanggal *" + tanggalAkhir + "*, mohon kerjsamanya untuk menindaklanjuti PKS ini.\n\n" +
                 "Diharapkan semua kewajiban pihak pertama maupun pihak kedua dapat diselesaikan sebelum tanggal berakhir PKS.\n\n" +
-                "Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir) dan membalas pesan ini melalui email ataupun WA serta melakukan upload di https://bit.ly/DOCPKSKSA\n\n" +
+                "Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir), mengupload dokumen yang sudah ditanda tangani serta upload di https://bit.ly/DOCPKSKSA sesuai dengan nama folder mitra dan membalas pesan ini melalui email ataupun WA\n\n" +
                 "Jika ada pertanyaan lebih lanjut mengenai hal ini, dapat menghubungi tim tata kelola\n\n" +
                 "Terima kasih atas perhatian dan kerjasamanya\n\n" +
                 "Hormat kami,\n\n\n" +
-                "Tim Tata Kelola"
+                "*Tim Tata Kelola*"
             );
 
             var url = "https://wa.me/62" + phoneNumber + "?text=" + message;

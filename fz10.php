@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Jatuh Tempo 45</title>
+    <title>Jatuh Tempo 10 Hari</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">>
     <!-- App favicon -->
     <link rel="shortcut icon" href="assets/images/logoUBL.png">
@@ -53,117 +53,172 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">Jatuh Tempo 45 Hari</h5>
+                                    <h5 class="card-title">Jatuh Tempo 10 Hari</h5>
+                                    <div class="table-responsive">
+                                        <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama Mitra</th>
+                                                    <th>Judul PKS</th>
+                                                    <th>Nomor PKS</th>
+                                                    <th>Ruang Lingkup</th>
+                                                    <th>Tanggal Awal</th>
+                                                    <th>Tanggal Akhir</th>
+                                                    <th>Tahun Berakhir</th>
+                                                    <th>Link PKS</th>
+                                                    <th>Status</th>
+                                                    <th>PIC KSA</th>
+                                                    <th>No HP PIC</th>
+                                                    <th>Email PIC</th>
+                                                    <th>PIC Eksternal</th>
+                                                    <th>No Hp Eksternal</th>
+                                                    <th>Email Eksternal</th>
+                                                    <th>Email Asisten Deputi</th>
+                                                    <th>Email Deputi</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                include 'koneksi.php';
+                                                include 'vendor/autoload.php'; // Memuat PHPMailer
 
-                                    <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Nama</th>
-                                                <th>No. Telp</th>
-                                                <th>Nomor PKS</th>
-                                                <th>Tanggal Akhir</th>
-                                                <th>Link PKS</th>
-                                                <th>Status</th>
-                                                <th>PIC</th>
-                                                <th>Aksi</th> <!-- Tambahkan kolom untuk tombol -->
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php
-                                        // Sisipkan file koneksi.php
-                                        include 'koneksi.php';
-                                        include 'vendor/autoload.php'; // Memuat PHPMailer
+                                                use PHPMailer\PHPMailer\PHPMailer;
+                                                use PHPMailer\PHPMailer\Exception;
 
-                                        use PHPMailer\PHPMailer\PHPMailer;
-                                        use PHPMailer\PHPMailer\Exception;
+                                                // Mendapatkan tanggal jatuh tempo
+                                                $tanggal_jatuh_tempo = date('Y-m-d', strtotime("30 days"));
 
+                                                // Query untuk mengambil data jatuh tempo
+                                                $sql = "SELECT * FROM datapks WHERE tanggalAkhir = '$tanggal_jatuh_tempo'";
+                                                $result = mysqli_query($koneksi, $sql);
 
-                                        // Mendapatkan tanggal hari ini dan tanggal jatuh tempo
-                                        $tanggal_sekarang = date('Y-m-d'); // Format YYYY-MM-DD
-                                        $tanggal_jatuh_tempo = date('Y-m-d', strtotime("10 days")); // 10 hari ke depan
+                                                if (mysqli_num_rows($result) > 0) {
+                                                    $nomor = 1;
+                                                    while ($row = mysqli_fetch_assoc($result)) {
+                                                        // Menentukan status jatuh tempo
+                                                        $status = "jatuh tempo";
 
-                                        // Modifikasi query untuk mengambil data dengan status jatuh tempo
-                                        $sql = "SELECT * FROM datapks WHERE tanggal_akhir = '$tanggal_jatuh_tempo'";
-                                        $result = mysqli_query($koneksi, $sql);
+                                                        echo "<tr>";
+                                                        echo "<td>" . $nomor . "</td>";
+                                                        echo "<td>" . $row['namaMitra'] . "</td>";
+                                                        echo "<td>" . $row['judulPks'] . "</td>";
+                                                        echo "<td>" . $row['nomorPks'] . "</td>";
+                                                        echo "<td>" . $row['ruangLingkup'] . "</td>";
+                                                        echo "<td>" . $row['tanggalAwal'] . "</td>";
+                                                        echo "<td>" . $row['tanggalAkhir'] . "</td>";
+                                                        echo "<td>" . $row['tahunBerakhir'] . "</td>";
+                                                        echo "<td><a href='" . $row['linkPks'] . "' target='_blank'>Link PKS</a></td>";
+                                                        echo "<td class='$status'>" . $status . "</td>";  // Menerapkan kelas status
+                                                        echo "<td>" . $row['picKsa'] . "</td>";
+                                                        echo "<td>" . $row['noHpPic'] . "</td>";
+                                                        echo "<td>" . $row['emailPic'] . "</td>";
+                                                        echo "<td>" . $row['picEksternal'] . "</td>";
+                                                        echo "<td>" . $row['noHpEksternal'] . "</td>";
+                                                        echo "<td>" . $row['emailEksternal'] . "</td>";
+                                                        echo "<td>" . $row['emailAsdep'] . "</td>";
+                                                        echo "<td>" . $row['emailDeputi'] . "</td>";
 
-                                        if (mysqli_num_rows($result) > 0) {
-                                            $nomor = 1;
-                                            while ($row = mysqli_fetch_assoc($result)) {
-                                                // Menentukan status jatuh tempo
-                                                $status = "jatuh tempo";
+                                                        // Tombol untuk WhatsApp
+                                                        $noHpPic = $row['noHpPic'];
+                                                        $nomorPks = $row['nomorPks'];
+                                                        $ruangLingkup = $row['ruangLingkup'];
+                                                        $tanggalAkhir = $row['tanggalAkhir'];
+                                                        echo "<td><button onclick=\"openWhatsApp('$noHpPic', '$nomorPks', '$ruangLingkup', '$tanggalAkhir')\" class='btn btn-success'>Whatsapp</button></td>";
 
-                                                echo "<tr>";
-                                                echo "<td>" . $nomor . "</td>";
-                                                echo "<td>" . $row['nama'] . "</td>";
-                                                echo "<td>" . $row['no_telp'] . "</td>";
-                                                echo "<td>" . $row['nomor_pks'] . "</td>";
-                                                echo "<td>" . $row['tanggal_akhir'] . "</td>";
-                                                echo "<td>" . $row['link_pks'] . "</td>";
-                                                echo "<td>" . $status . "</td>";  
-                                                echo "<td>" . $row['pic'] . "</td>";
+                                                        // Tombol Email dengan form POST
+                                                        // Tombol Email dengan form POST
+                                                        echo "<td>
+                                                        <form method='POST'>
+                                                            <input type='hidden' name='emailPic' value='{$row['emailPic']}'>
+                                                            <input type='hidden' name='emailAsdep' value='{$row['emailAsdep']}'>
+                                                            <input type='hidden' name='emailDeputi' value='{$row['emailDeputi']}'>
+                                                            <button type='submit' class='btn btn-danger' name='send_email'>Email</button>
+                                                        </form>
+                                                        </td>";
+                                                        echo "</tr>";
 
-                                                // Tombol untuk WhatsApp
-                                                $no_telp = $row['no_telp'];
-                                                $nomor_pks = $row['nomor_pks'];
-                                                $ruang_lingkup = $row['ruang_lingkup'];
-                                                $tanggal_akhir = $row['tanggal_akhir'];
-                                                echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_akhir')\" class='btn btn-success'>Whatsapp</button></td>";
+                                                        echo "</tr>";
+                                                        $nomor++;
+                                                    }
+                                                } else {
+                                                    echo "<div class='alert alert-warning text-center' role='alert'>Tidak ada data jatuh tempo dalam 10 hari yang ditemukan.</div>";
+                                                }
 
-                                                // Tombol Email
-                                                echo "<td><form method='POST'><input type='hidden' name='email' value='{$row['email']}'><button type='submit' class='btn btn-danger'>Email</button></form></td>";
-                                                echo "</tr>";
-                                                $nomor++;
-                                            }
-                                        } else {
-                                            echo "<div class='row mt-4'>
-                                            <div class='col-md-12'>
-                                                <div class='alert alert-warning text-center' role='alert'>
-                                                    Tidak ada data jatuh tempo dalam 10 hari yang ditemukan.
-                                                </div>
-                                            </div>
-                                        </div>";
-                                        }
+                                                // Logika untuk mengirim email
+                                                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_email'])) {
+                                                    $email_penerima1 = $_POST['emailPic'];
+                                                    $email_penerima2 = $_POST['emailAsdep'];
+                                                    $email_penerima3 = $_POST['emailDeputi'];
 
-                                        // Logika untuk mengirim email
-                                        
-                                        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
-                                            
-                                            $email_penerima = $_POST['email'];
-                                            $mail = new PHPMailer(true);
+                                                    $mail = new PHPMailer(true);
 
-                                            try {
-                                                // Pengaturan server
-                                                $mail->isSMTP();
-                                                $mail->Host       = 'smtp.example.com'; // Ganti dengan server SMTP Anda
-                                                $mail->SMTPAuth   = true;
-                                                $mail->Username   = 'email@example.com'; // Email pengirim
-                                                $mail->Password   = 'password'; // Password email
-                                                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                                                $mail->Port       = 587;
+                                                    try {
+                                                        // Pengaturan server Gmail
+                                                        $mail->isSMTP();
+                                                        $mail->Host       = 'smtp.gmail.com';
+                                                        $mail->SMTPAuth   = true;
+                                                        $mail->Username   = 'lyshakaera@gmail.com'; // Email pengirim
+                                                        $mail->Password   = 'kscj lfsb wlec gsxn'; // Gunakan App Password Gmail
+                                                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                                                        $mail->Port       = 587;
 
-                                                // Pengaturan email
-                                                $mail->setFrom('email@example.com', 'Nama Pengirim');
-                                                $mail->addAddress($email_penerima);
-                                                $mail->addCC('cc1@example.com');
-                                                $mail->addCC('cc2@example.com');
-                                                $mail->addCC('cc3@example.com');
+                                                        // Pengaturan email
+                                                        $mail->setFrom('lyshakaera@gmail.com', 'Reminder PKS KSA');
 
-                                                // Konten email
-                                                $mail->isHTML(true);
-                                                $mail->Subject = 'Reminder PKS';
-                                                $mail->Body    = 'Ini adalah pengingat untuk PKS yang akan jatuh tempo.';
+                                                        // Menambahkan penerima
+                                                        $hasRecipient = false; // Menandakan ada penerima yang valid
+                                                        if (!empty($email_penerima1)) {
+                                                            $mail->addAddress($email_penerima1);
+                                                            $hasRecipient = true; // Ada penerima
+                                                        }
+                                                        if (!empty($email_penerima2)) {
+                                                            $mail->addAddress($email_penerima2);
+                                                            $hasRecipient = true; // Ada penerima
+                                                        }
+                                                        if (!empty($email_penerima3)) {
+                                                            $mail->addAddress($email_penerima3);
+                                                            $hasRecipient = true; // Ada penerima
+                                                        }
 
-                                                // Kirim email
-                                                $mail->send();
-                                                echo 'Email berhasil dikirim';
-                                            } catch (Exception $e) {
-                                                echo "Email gagal dikirim. Error: {$mail->ErrorInfo}";
-                                            }
-                                        }
-                                        ?>
-                                        </tbody>
-                                    </table>
+                                                        // Pastikan setidaknya satu alamat email ada sebelum mengirim
+                                                        if ($hasRecipient) {
+                                                            // Konten email
+                                                            $mail->isHTML(true);
+                                                            $mail->Subject = 'Reminder PKS';
+                                                            $mail->Body = "
+                                                                            <p><strong>Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.</strong></p>
+                                                                            <p>Dengan hormat,</p>
+                                                                            <p>
+                                                                                Masa berlaku kerjasama PKS dengan <strong>$nomorPks</strong> tentang <strong>$ruangLingkup</strong> 
+                                                                                akan berakhir pada tanggal <strong>$tanggalAkhir</strong> atau 10 hari lagi, sebagai informasi, bahwa PKS anda sudah dilakukan freeze sementara (tutup layanan).
+                                                                            </p>
+                                                                            <p>
+                                                                                Silahkan melakukan final konfirmasi kepada mitra atas kerjasama tersebut, jika ada pertanyaan lebih lanjut mengenai hal ini, dapat menghubungi tim tata kelola.
+                                                                            <p>
+                                                                                Terima kasih atas perhatian dan kerjasamanya.
+                                                                            </p>
+                                                                            <p>Hormat kami,</p>
+                                                                            <p><strong>Tim Tata Kelola</strong></p>
+                                                                        ";
+
+                                                            // Kirim email
+                                                            $mail->send();
+                                                            echo '<div class="alert alert-success">Email berhasil dikirim</div>';
+                                                        } else {
+                                                            echo '<div class="alert alert-warning">Tidak ada alamat email yang valid untuk dikirim.</div>';
+                                                        }
+                                                    } catch (Exception $e) {
+                                                        echo '<div class="alert alert-danger">Email gagal dikirim. Error: ' . $mail->ErrorInfo . '</div>';
+                                                    }
+                                                }
+
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
 
 
                                 </div>
@@ -245,22 +300,44 @@
     <script src="assets/js/app.js"></script>
 
     <script>
-        function openWhatsApp(phoneNumber, nomor_pks, ruang_lingkup, tanggalAkhir) {
+        function openWhatsApp(phoneNumber, nomorPks, ruangLingkup, tanggalAkhir) {
+            // Menambahkan kode negara Indonesia (+62)
+            if (phoneNumber.startsWith("0")) {
+                phoneNumber = phoneNumber.substring(1); // Menghapus angka 0 di awal jika ada
+            }
+
+            // Mengencode pesan untuk URL
             var message = encodeURIComponent(
-                "Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.\n"+ 
-                "Dengan hormat"+",\n\n" +
-                "Masa berlaku kerjasama PKS dengan *" + nomor_pks + "* tentang *" +ruang_lingkup+ "* akan berakhir pada tanggal *" +tanggalAkhir+ "* atau 15 hari lagi, mohon kerjsamanya untuk menindaklanjuti PKS ini.\n\n"+
-                "Diharapkan semua kewajiban pihak pertama maupun pihak kedua dapat diselesaikan sebelum tanggal berakhir PKS.\n\n"+
-                "Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir) dan membalas pesan ini melalui email ataupun WA serta melakukan upload di https://bit.ly/DOCPKSKSA\n\n"+
-                "Jika ada pertanyaan lebih lanjut mengenai hal ini, dapat menghubungi tim tata kelola\n\n"+
-                "Terima kasih atas perhatian dan kerjasamanya\n\n"+
-                "Hormat kami,\n\n\n"+
-                "Tim Tata Kelola"
+                "*Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.*\n\n" +
+                "Dengan hormat" + ",\n\n" +
+                "Masa berlaku kerjasama PKS dengan *" + nomorPks + "* tentang *" + ruangLingkup + "* akan berakhir pada tanggal *" + tanggalAkhir + "* atau 10 hari lagi, sebagai informasi, bahwa PKS anda sudah dilakukan freeze sementara (tutup layanan).\n\n" +
+                "Silahkan melakukan final konfirmasi kepada mitra atas kerjasama tersebut, jika ada pertanyaan lebih lanjut mengenai hal ini, dapat menghubungi tim tata kelola\n\n" +
+                "Terima kasih atas perhatian dan kerjasamanya\n\n" +
+                "Hormat kami,\n\n\n" +
+                "*Tim Tata Kelola*"
             );
 
-            var url = "https://wa.me/" + phoneNumber + "?text=" + message;
+            var url = "https://wa.me/62" + phoneNumber + "?text=" + message;
             window.open(url, '_blank');
         }
+    </script>
+
+
+    <script>
+        $(document).ready(function() {
+            // Cek apakah DataTable sudah diinisialisasi
+            if ($.fn.DataTable.isDataTable('#datatable')) {
+                $('#datatable').DataTable().destroy(); // Hancurkan instance DataTables sebelumnya
+            }
+
+            // Inisialisasi DataTables
+            $('#datatable').DataTable({
+                scrollX: true,
+                paging: true,
+                searching: true,
+                lengthChange: true
+            });
+        });
     </script>
 
 </body>
