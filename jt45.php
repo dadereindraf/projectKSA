@@ -54,123 +54,145 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Jatuh Tempo 45 Hari</h5>
+                                    <div class="table-responsive">
+                                        <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama Mitra</th>
+                                                    <th>Judul PKS</th>
+                                                    <th>Nomor PKS</th>
+                                                    <th>Ruang Lingkup</th>
+                                                    <th>Tanggal Awal</th>
+                                                    <th>Tanggal Akhir</th>
+                                                    <th>Tahun Berakhir</th>
+                                                    <th>Link PKS</th>
+                                                    <th>Status</th>
+                                                    <th>PIC KSA</th>
+                                                    <th>No HP PIC</th>
+                                                    <th>Email PIC</th>
+                                                    <th>PIC Eksternal</th>
+                                                    <th>No Hp Eksternal</th>
+                                                    <th>Email Eksternal</th>
+                                                    <th>Email Asisten Deputi</th>
+                                                    <th>Email Deputi</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                include 'koneksi.php';
+                                                include 'vendor/autoload.php'; // Memuat PHPMailer
 
-                                    <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Nama</th>
-                                                <th>No. Telp</th>
-                                                <th>Nomor PKS</th>
-                                                <th>Tanggal Akhir</th>
-                                                <th>Link PKS</th>
-                                                <th>Status</th>
-                                                <th>PIC</th>
-                                                <th>Aksi</th> <!-- Tambahkan kolom untuk tombol -->
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            include 'koneksi.php';
-                                            include 'vendor/autoload.php'; // Memuat PHPMailer
+                                                use PHPMailer\PHPMailer\PHPMailer;
+                                                use PHPMailer\PHPMailer\Exception;
 
-                                            use PHPMailer\PHPMailer\PHPMailer;
-                                            use PHPMailer\PHPMailer\Exception;
+                                                // Mendapatkan tanggal jatuh tempo
+                                                $tanggal_jatuh_tempo = date('Y-m-d', strtotime("45 days"));
 
-                                            // Mendapatkan tanggal jatuh tempo
-                                            $tanggal_jatuh_tempo = date('Y-m-d', strtotime("45 days"));
+                                                // Query untuk mengambil data jatuh tempo
+                                                $sql = "SELECT * FROM datapks WHERE tanggalAkhir = '$tanggal_jatuh_tempo'";
+                                                $result = mysqli_query($koneksi, $sql);
 
-                                            // Query untuk mengambil data jatuh tempo
-                                            $sql = "SELECT * FROM datapks WHERE tanggal_akhir = '$tanggal_jatuh_tempo'";
-                                            $result = mysqli_query($koneksi, $sql);
+                                                if (mysqli_num_rows($result) > 0) {
+                                                    $nomor = 1;
+                                                    while ($row = mysqli_fetch_assoc($result)) {
+                                                        // Menentukan status jatuh tempo
+                                                        $status = "jatuh tempo";
 
-                                            if (mysqli_num_rows($result) > 0) {
-                                                $nomor = 1;
-                                                while ($row = mysqli_fetch_assoc($result)) {
-                                                    // Menentukan status jatuh tempo
-                                                    $status = "jatuh tempo";
+                                                        echo "<tr>";
+                                                        echo "<td>" . $nomor . "</td>";
+                                                        echo "<td>" . $row['namaMitra'] . "</td>";
+                                                        echo "<td>" . $row['judulPks'] . "</td>";
+                                                        echo "<td>" . $row['nomorPks'] . "</td>";
+                                                        echo "<td>" . $row['ruangLingkup'] . "</td>";
+                                                        echo "<td>" . $row['tanggalAwal'] . "</td>";
+                                                        echo "<td>" . $row['tanggalAkhir'] . "</td>";
+                                                        echo "<td>" . $row['tahunBerakhir'] . "</td>";
+                                                        echo "<td><a href='" . $row['linkPks'] . "' target='_blank'>Link PKS</a></td>";
+                                                        echo "<td class='$status'>" . $status . "</td>";  // Menerapkan kelas status
+                                                        echo "<td>" . $row['picKsa'] . "</td>";
+                                                        echo "<td>" . $row['noHpPic'] . "</td>";
+                                                        echo "<td>" . $row['emailPic'] . "</td>";
+                                                        echo "<td>" . $row['picEksternal'] . "</td>";
+                                                        echo "<td>" . $row['noHpEksternal'] . "</td>";
+                                                        echo "<td>" . $row['emailEksternal'] . "</td>";
+                                                        echo "<td>" . $row['emailAsdep'] . "</td>";
+                                                        echo "<td>" . $row['emailDeputi'] . "</td>";
 
-                                                    echo "<tr>";
-                                                    echo "<td>" . $nomor . "</td>";
-                                                    echo "<td>" . $row['nama'] . "</td>";
-                                                    echo "<td>" . $row['no_telp'] . "</td>";
-                                                    echo "<td>" . $row['nomor_pks'] . "</td>";
-                                                    echo "<td>" . $row['tanggal_akhir'] . "</td>";
-                                                    echo "<td>" . $row['link_pks'] . "</td>";
-                                                    echo "<td>" . $status . "</td>";
-                                                    echo "<td>" . $row['pic'] . "</td>";
+                                                        // Tombol untuk WhatsApp
+                                                        $noHpPic = $row['noHpPic'];
+                                                        $nomorPks = $row['nomorPks'];
+                                                        $ruangLingkup = $row['ruangLingkup'];
+                                                        $tanggalAkhir = $row['tanggalAkhir'];
+                                                        echo "<td><button onclick=\"openWhatsApp('$noHpPic', '$nomorPks', '$ruangLingkup', '$tanggalAkhir')\" class='btn btn-success'>Whatsapp</button></td>";
 
-                                                    // Tombol untuk WhatsApp
-                                                    $no_telp = $row['no_telp'];
-                                                    $nomor_pks = $row['nomor_pks'];
-                                                    $ruang_lingkup = $row['ruang_lingkup'];
-                                                    $tanggal_akhir = $row['tanggal_akhir'];
-                                                    echo "<td><button onclick=\"openWhatsApp('$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_akhir')\" class='btn btn-success'>Whatsapp</button></td>";
-
-                                                    // Tombol Email dengan form POST
-                                                    // Tombol Email dengan form POST
-                                                    echo "<td>
+                                                        // Tombol Email dengan form POST
+                                                        // Tombol Email dengan form POST
+                                                        echo "<td>
                                                         <form method='POST'>
-                                                            <input type='hidden' name='email1' value='{$row['email1']}'>
-                                                            <input type='hidden' name='email2' value='{$row['email2']}'>
-                                                            <input type='hidden' name='email3' value='{$row['email3']}'>
+                                                            <input type='hidden' name='email1' value='{$row['emailPic']}'>
+                                                            <input type='hidden' name='email2' value='{$row['emailAsdep']}'>
+                                                            <input type='hidden' name='email3' value='{$row['emailDeputi']}'>
                                                             <button type='submit' class='btn btn-danger' name='send_email'>Email</button>
                                                         </form>
                                                         </td>";
-                                                    echo "</tr>";
+                                                        echo "</tr>";
 
-                                                    echo "</tr>";
-                                                    $nomor++;
-                                                }
-                                            } else {
-                                                echo "<div class='alert alert-warning text-center' role='alert'>Tidak ada data jatuh tempo dalam 45 hari yang ditemukan.</div>";
-                                            }
-
-                                            // Logika untuk mengirim email
-                                            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_email'])) {
-                                                $email_penerima1 = $_POST['email1'];
-                                                $email_penerima2 = $_POST['email2'];
-                                                $email_penerima3 = $_POST['email3'];
-
-                                                $mail = new PHPMailer(true);
-
-                                                try {
-                                                    // Pengaturan server Gmail
-                                                    $mail->isSMTP();
-                                                    $mail->Host       = 'smtp.gmail.com';
-                                                    $mail->SMTPAuth   = true;
-                                                    $mail->Username   = 'lyshakaera@gmail.com'; // Email pengirim
-                                                    $mail->Password   = 'kscj lfsb wlec gsxn'; // Gunakan App Password Gmail
-                                                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                                                    $mail->Port       = 587;
-
-                                                    // Pengaturan email
-                                                    $mail->setFrom('lyshakaera@gmail.com', 'Nama Pengirim');
-
-                                                    // Menambahkan penerima
-                                                    $mail->addAddress($email_penerima1);
-                                                    if (!empty($email_penerima2)) {
-                                                        $mail->addAddress($email_penerima2);
+                                                        echo "</tr>";
+                                                        $nomor++;
                                                     }
-                                                    if (!empty($email_penerima3)) {
-                                                        $mail->addAddress($email_penerima3);
-                                                    }
-
-                                                    // Konten email
-                                                    $mail->isHTML(true);
-                                                    $mail->Subject = 'Reminder PKS';
-                                                    $mail->Body    = 'Ini adalah pengingat untuk PKS yang akan jatuh tempo.';
-
-                                                    // Kirim email
-                                                    $mail->send();
-                                                    echo '<div class="alert alert-success">Email berhasil dikirim</div>';
-                                                } catch (Exception $e) {
-                                                    echo '<div class="alert alert-danger">Email gagal dikirim. Error: ' . $mail->ErrorInfo . '</div>';
+                                                } else {
+                                                    echo "<div class='alert alert-warning text-center' role='alert'>Tidak ada data jatuh tempo dalam 45 hari yang ditemukan.</div>";
                                                 }
-                                            }
-                                            ?>
-                                        </tbody>
-                                    </table>
+
+                                                // Logika untuk mengirim email
+                                                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_email'])) {
+                                                    $email_penerima1 = $_POST['emailPic'];
+                                                    $email_penerima2 = $_POST['emailAsdep'];
+                                                    $email_penerima3 = $_POST['emailDeputi'];
+
+                                                    $mail = new PHPMailer(true);
+
+                                                    try {
+                                                        // Pengaturan server Gmail
+                                                        $mail->isSMTP();
+                                                        $mail->Host       = 'smtp.gmail.com';
+                                                        $mail->SMTPAuth   = true;
+                                                        $mail->Username   = 'lyshakaera@gmail.com'; // Email pengirim
+                                                        $mail->Password   = 'kscj lfsb wlec gsxn'; // Gunakan App Password Gmail
+                                                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                                                        $mail->Port       = 587;
+
+                                                        // Pengaturan email
+                                                        $mail->setFrom('lyshakaera@gmail.com', 'Nama Pengirim');
+
+                                                        // Menambahkan penerima
+                                                        $mail->addAddress($email_penerima1);
+                                                        if (!empty($email_penerima2)) {
+                                                            $mail->addAddress($email_penerima2);
+                                                        }
+                                                        if (!empty($email_penerima3)) {
+                                                            $mail->addAddress($email_penerima3);
+                                                        }
+
+                                                        // Konten email
+                                                        $mail->isHTML(true);
+                                                        $mail->Subject = 'Reminder PKS';
+                                                        $mail->Body    = 'Ini adalah pengingat untuk PKS yang akan jatuh tempo.';
+
+                                                        // Kirim email
+                                                        $mail->send();
+                                                        echo '<div class="alert alert-success">Email berhasil dikirim</div>';
+                                                    } catch (Exception $e) {
+                                                        echo '<div class="alert alert-danger">Email gagal dikirim. Error: ' . $mail->ErrorInfo . '</div>';
+                                                    }
+                                                }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
 
 
                                 </div>
@@ -253,6 +275,12 @@
 
     <script>
         function openWhatsApp(phoneNumber, nomor_pks, ruang_lingkup, tanggalAkhir) {
+            // Menambahkan kode negara Indonesia (+62)
+            if (phoneNumber.startsWith("0")) {
+                phoneNumber = phoneNumber.substring(1); // Menghapus angka 0 di awal jika ada
+            }
+
+            // Mengencode pesan untuk URL
             var message = encodeURIComponent(
                 "Perihal: Peringatan Berakhirnya Masa Kerjasama PKS.\n" +
                 "Dengan hormat" + ",\n\n" +
@@ -265,9 +293,27 @@
                 "Tim Tata Kelola"
             );
 
-            var url = "https://wa.me/" + phoneNumber + "?text=" + message;
+            var url = "https://wa.me/62" + phoneNumber + "?text=" + message;
             window.open(url, '_blank');
         }
+    </script>
+
+
+    <script>
+        $(document).ready(function() {
+            // Cek apakah DataTable sudah diinisialisasi
+            if ($.fn.DataTable.isDataTable('#datatable')) {
+                $('#datatable').DataTable().destroy(); // Hancurkan instance DataTables sebelumnya
+            }
+
+            // Inisialisasi DataTables
+            $('#datatable').DataTable({
+                scrollX: true,
+                paging: true,
+                searching: true,
+                lengthChange: true
+            });
+        });
     </script>
 
 </body>

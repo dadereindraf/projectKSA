@@ -60,18 +60,18 @@
                         $total_rows_datapks = ($result_total) ? mysqli_fetch_assoc($result_total)['total_rows'] : "Error: " . mysqli_error($koneksi);
 
                         // Menghitung data Aktif (tanggal_akhir lebih besar dari hari ini)
-                        $query_aktif = "SELECT COUNT(*) AS total_aktif FROM datapks WHERE tanggal_akhir > CURDATE()";
+                        $query_aktif = "SELECT COUNT(*) AS total_aktif FROM datapks WHERE tanggalAkhir > CURDATE()";
                         $result_aktif = mysqli_query($koneksi, $query_aktif);
                         $total_rows_aktif = ($result_aktif) ? mysqli_fetch_assoc($result_aktif)['total_aktif'] : "Error: " . mysqli_error($koneksi);
 
                         // Menghitung data Jatuh Tempo (tanggal_akhir antara hari ini dan 30 hari mendatang)
                         // Menghitung total data jatuh tempo
-                        $query_jatuh_tempo = "SELECT COUNT(*) AS total_jatuh_tempo FROM datapks WHERE tanggal_akhir > CURDATE() AND tanggal_akhir <= DATE_ADD(CURDATE(), INTERVAL 45 DAY)";
+                        $query_jatuh_tempo = "SELECT COUNT(*) AS total_jatuh_tempo FROM datapks WHERE tanggalAkhir > CURDATE() AND tanggalAkhir <= DATE_ADD(CURDATE(), INTERVAL 45 DAY)";
                         $result_jatuh_tempo = mysqli_query($koneksi, $query_jatuh_tempo);
                         $total_rows_jatuh_tempo = ($result_jatuh_tempo) ? mysqli_fetch_assoc($result_jatuh_tempo)['total_jatuh_tempo'] : "Error: " . mysqli_error($koneksi);
 
                         // Menghitung data Expired (tanggal_akhir lebih kecil dari hari ini)
-                        $query_expired = "SELECT COUNT(*) AS total_expired FROM datapks WHERE tanggal_akhir < CURDATE()";
+                        $query_expired = "SELECT COUNT(*) AS total_expired FROM datapks WHERE tanggalAkhir < CURDATE()";
                         $result_expired = mysqli_query($koneksi, $query_expired);
                         $total_rows_expired = ($result_expired) ? mysqli_fetch_assoc($result_expired)['total_expired'] : "Error: " . mysqli_error($koneksi);
 
@@ -134,23 +134,15 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-6">
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <h5 class="card-title">Grafik PKS Pie Chart</h5>
-                                    <canvas id='pieChart' width='400' height='250'></canvas>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="row">
                         <?php
 
                         // Menghitung jumlah data berdasarkan tahun dari tanggal_akhir
-                        $query_tahun = "SELECT YEAR(tanggal_akhir) AS tahun, COUNT(*) AS total
+                        $query_tahun = "SELECT YEAR(tanggalAkhir) AS tahun, COUNT(*) AS total
                                     FROM datapks
-                                    GROUP BY YEAR(tanggal_akhir)
+                                    GROUP BY YEAR(tanggalAkhir)
                                     ORDER BY tahun ASC
                                     ";
 

@@ -41,7 +41,7 @@
             /* Warna teks merah */
         }
 
-        th{
+        th {
             text-align: center;
         }
     </style>
@@ -124,8 +124,23 @@
                                 </div><!-- /.modal -->
 
 
+
                                 <?php
                                 include 'koneksi.php';
+
+                                function convertDateFormat($date)
+                                {
+                                    // Cek apakah tanggal dalam format MM/DD/YYYY
+                                    if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $date, $matches)) {
+                                        return $matches[3] . '-' . str_pad($matches[1], 2, '0', STR_PAD_LEFT) . '-' . str_pad($matches[2], 2, '0', STR_PAD_LEFT);
+                                    }
+                                    // Cek apakah tanggal dalam format DD-MM-YYYY
+                                    elseif (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/', $date, $matches)) {
+                                        return $matches[3] . '-' . str_pad($matches[2], 2, '0', STR_PAD_LEFT) . '-' . str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+                                    }
+                                    return $date; // Kembalikan tanggal asli jika tidak cocok
+                                }
+
 
                                 if (isset($_POST["submit"])) {
                                     $target_dir = "uploads/";
@@ -152,30 +167,37 @@
                                             // Lakukan operasi INSERT SQL ke dalam tabel database
                                             while (($data = fgetcsv($file, 1000, ",")) !== FALSE) {
                                                 // Melewati baris pertama yang berisi nama kolom
-                                                if ($firstRowSkipped === false) {
+                                                if (!$firstRowSkipped) {
                                                     $firstRowSkipped = true;
                                                     continue; // Skip baris ini dan lanjutkan ke baris berikutnya
                                                 }
 
                                                 // Bersihkan data yang diambil dari CSV
-                                                $nama = mysqli_real_escape_string($koneksi, $data[0]);
-                                                $no_telp = isset($data[1]) ? mysqli_real_escape_string($koneksi, $data[1]) : ''; // Handle kosong
-                                                $nomor_pks = mysqli_real_escape_string($koneksi, $data[2]);
-                                                $ruang_lingkup = mysqli_real_escape_string($koneksi, $data[3]);
-                                                $tanggal_awal = mysqli_real_escape_string($koneksi, $data[4]);
-                                                $tanggal_akhir = mysqli_real_escape_string($koneksi, $data[5]);
-                                                $tahun = mysqli_real_escape_string($koneksi, $data[6]);
-                                                $link_pks = mysqli_real_escape_string($koneksi, $data[7]);
-                                                $status = mysqli_real_escape_string($koneksi, $data[8]);
-                                                $pic = isset($data[9]) ? mysqli_real_escape_string($koneksi, $data[9]) : ''; // Handle kosong
+                                                $namaMitra = mysqli_real_escape_string($koneksi, $data[0]);
+                                                $judulPks = isset($data[1]) ? mysqli_real_escape_string($koneksi, $data[1]) : ''; // Handle kosong
+                                                $nomorPks = mysqli_real_escape_string($koneksi, $data[2]);
+                                                $ruangLingkup = mysqli_real_escape_string($koneksi, $data[3]);
+                                                // Sebelum melakukan INSERT, konversi tanggal
+                                                $tanggalAwal = convertDateFormat(mysqli_real_escape_string($koneksi, $data[4]));
+                                                $tanggalAkhir = convertDateFormat(mysqli_real_escape_string($koneksi, $data[5]));
 
-                                                // Konversi format tanggal dari DD/MM/YYYY ke YYYY-MM-DD
-                                                $tanggal_awal_converted = date("Y-m-d", strtotime(str_replace('/', '-', $tanggal_awal)));
-                                                $tanggal_akhir_converted = date("Y-m-d", strtotime(str_replace('/', '-', $tanggal_akhir)));
+                                                $tahunBerakhir = mysqli_real_escape_string($koneksi, $data[6]);
+                                                $linkPks = mysqli_real_escape_string($koneksi, $data[7]);
+                                                $status = mysqli_real_escape_string($koneksi, $data[8]);
+                                                $picKsa = isset($data[9]) ? mysqli_real_escape_string($koneksi, $data[9]) : ''; // Handle kosong
+                                                $noHpPic = isset($data[10]) ? mysqli_real_escape_string($koneksi, $data[10]) : ''; // Handle kosong
+                                                $emailPic = isset($data[11]) ? mysqli_real_escape_string($koneksi, $data[11]) : ''; // Handle kosong
+                                                $picEksternal = isset($data[12]) ? mysqli_real_escape_string($koneksi, $data[12]) : ''; // Handle kosong
+                                                $noHpEksternal = isset($data[13]) ? mysqli_real_escape_string($koneksi, $data[13]) : ''; // Handle kosong
+                                                $emailEksternal = isset($data[14]) ? mysqli_real_escape_string($koneksi, $data[14]) : ''; // Handle kosong
+                                                $emailAsdep = isset($data[15]) ? mysqli_real_escape_string($koneksi, $data[15]) : ''; // Handle kosong
+                                                $emailDeputi = isset($data[16]) ? mysqli_real_escape_string($koneksi, $data[16]) : ''; // Handle kosong
+
+
 
                                                 // Lakukan operasi INSERT SQL ke dalam tabel database
-                                                $sql = "INSERT INTO datapks (nama, no_telp, nomor_pks, ruang_lingkup, tanggal_awal, tanggal_akhir, tahun, link_pks, status, pic) 
-                        VALUES ('$nama', '$no_telp', '$nomor_pks', '$ruang_lingkup', '$tanggal_awal_converted', '$tanggal_akhir_converted', '$tahun', '$link_pks', '$status', '$pic')";
+                                                $sql = "INSERT INTO datapks (namaMitra, judulPks, nomorPks, ruangLingkup, tanggalAwal, tanggalAkhir, tahunBerakhir, linkPks, status, picKsa, noHpPic, emailPic, picEksternal, noHpEksternal, emailEksternal, emailAsdep, emailDeputi) 
+                        VALUES ('$namaMitra', '$judulPks', '$nomorPks', '$ruangLingkup', '$tanggalAwal', '$tanggalAkhir', '$tahunBerakhir', '$linkPks', '$status', '$picKsa', '$noHpPic', '$emailPic', '$picEksternal', '$noHpEksternal', '$emailEksternal', '$emailAsdep', '$emailDeputi')";
 
                                                 if ($koneksi->query($sql) !== TRUE) {
                                                     echo "Error: " . $sql . "<br>" . $koneksi->error;
@@ -188,6 +210,7 @@
                                     }
                                 }
                                 ?>
+
 
 
 
@@ -206,16 +229,23 @@
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
-                                                    <th>Nama</th>
-                                                    <th>No. Telp</th>
+                                                    <th>Nama Mitra</th>
+                                                    <th>Judul PKS</th>
                                                     <th>Nomor PKS</th>
                                                     <th>Ruang Lingkup</th>
                                                     <th>Tanggal Awal</th>
                                                     <th>Tanggal Akhir</th>
-                                                    <th>Tahun</th>
+                                                    <th>Tahun Berakhir</th>
                                                     <th>Link PKS</th>
                                                     <th>Status</th>
-                                                    <th>PIC</th>
+                                                    <th>PIC KSA</th>
+                                                    <th>No HP PIC</th>
+                                                    <th>Email PIC</th>
+                                                    <th>PIC Eksternal</th>
+                                                    <th>No Hp Eksternal</th>
+                                                    <th>Email Eksternal</th>
+                                                    <th>Email Asisten Deputi</th>
+                                                    <th>Email Deputi</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -230,7 +260,7 @@
                                                     $nomor = 1;
                                                     while ($row = mysqli_fetch_assoc($result)) {
                                                         // Mendapatkan tanggal akhir dan mengubahnya menjadi timestamp
-                                                        $tanggal_akhir = strtotime($row['tanggal_akhir']);
+                                                        $tanggal_akhir = strtotime($row['tanggalAkhir']);
                                                         $tanggal_sekarang = time();
                                                         $tanggal_jatuh_tempo = strtotime("+45 days", $tanggal_sekarang);
 
@@ -249,16 +279,23 @@
                                                         // Output tabel dengan kelas di kolom status
                                                         echo "<tr>";
                                                         echo "<td>" . $nomor . "</td>";
-                                                        echo "<td>" . $row['nama'] . "</td>";
-                                                        echo "<td>" . $row['no_telp'] . "</td>";
-                                                        echo "<td>" . $row['nomor_pks'] . "</td>";
-                                                        echo "<td>" . $row['ruang_lingkup'] . "</td>";
-                                                        echo "<td>" . $row['tanggal_awal'] . "</td>";
-                                                        echo "<td>" . $row['tanggal_akhir'] . "</td>";
-                                                        echo "<td>" . $row['tahun'] . "</td>";
-                                                        echo "<td><a href='" . $row['link_pks'] . "' target='_blank'>Link PKS</a></td>";
+                                                        echo "<td>" . $row['namaMitra'] . "</td>";
+                                                        echo "<td>" . $row['judulPks'] . "</td>";
+                                                        echo "<td>" . $row['nomorPks'] . "</td>";
+                                                        echo "<td>" . $row['ruangLingkup'] . "</td>";
+                                                        echo "<td>" . $row['tanggalAwal'] . "</td>";
+                                                        echo "<td>" . $row['tanggalAkhir'] . "</td>";
+                                                        echo "<td>" . $row['tahunBerakhir'] . "</td>";
+                                                        echo "<td><a href='" . $row['linkPks'] . "' target='_blank'>Link PKS</a></td>";
                                                         echo "<td class='$status_class'>" . $status . "</td>";  // Menerapkan kelas status
-                                                        echo "<td>" . $row['pic'] . "</td>";
+                                                        echo "<td>" . $row['picKsa'] . "</td>";
+                                                        echo "<td>" . $row['noHpPic'] . "</td>";
+                                                        echo "<td>" . $row['emailPic'] . "</td>";
+                                                        echo "<td>" . $row['picEksternal'] . "</td>";
+                                                        echo "<td>" . $row['noHpEksternal'] . "</td>";
+                                                        echo "<td>" . $row['emailEksternal'] . "</td>";
+                                                        echo "<td>" . $row['emailAsdep'] . "</td>";
+                                                        echo "<td>" . $row['emailDeputi'] . "</td>";
                                                         echo "</tr>";
                                                         $nomor++;
                                                     }
