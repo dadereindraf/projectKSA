@@ -198,7 +198,7 @@
                                                                                 Diharapkan semua kewajiban pihak pertama maupun pihak kedua dapat diselesaikan sebelum tanggal berakhir PKS.
                                                                             </p>
                                                                             <p>
-                                                                                Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir), 
+                                                                                Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir di link gdrive ), 
                                                                                 mengupload dokumen yang sudah ditandatangani serta upload di <a href='https://bit.ly/DOCPKSKSA'>https://bit.ly/DOCPKSKSA</a> 
                                                                                 sesuai dengan nama folder mitra dan membalas pesan ini melalui email ataupun WA.
                                                                             </p>
@@ -321,7 +321,7 @@
                 "Dengan hormat" + ",\n\n" +
                 "Masa berlaku kerjasama PKS dengan *" + nomorPks + "* tentang *" + ruangLingkup + "* akan berakhir pada tanggal *" + tanggalAkhir + "*, mohon kerjsamanya untuk menindaklanjuti PKS ini.\n\n" +
                 "Diharapkan semua kewajiban pihak pertama maupun pihak kedua dapat diselesaikan sebelum tanggal berakhir PKS.\n\n" +
-                "Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir), mengupload dokumen yang sudah ditanda tangani serta upload di https://bit.ly/DOCPKSKSA sesuai dengan nama folder mitra dan membalas pesan ini melalui email ataupun WA\n\n" +
+                "Kami ingin meminta konfirmasi kepada PIC PKS untuk melakukan proses konfirmasi dengan cara mengisi form konfirmasi (form terlampir di link gdrive), mengupload dokumen yang sudah ditanda tangani serta upload di https://bit.ly/DOCPKSKSA sesuai dengan nama folder mitra dan membalas pesan ini melalui email ataupun WA\n\n" +
                 "Jika ada pertanyaan lebih lanjut mengenai hal ini, dapat menghubungi tim tata kelola\n\n" +
                 "Terima kasih atas perhatian dan kerjasamanya\n\n" +
                 "Hormat kami,\n\n\n" +

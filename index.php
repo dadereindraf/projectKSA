@@ -50,34 +50,35 @@
                 <!-- Container -->
                 <div class="container-fluid">
 
-                    <div class="row mx-0"> <!-- Menambahkan mx-0 untuk menghilangkan margin horizontal -->
-                        <?php
-                        include 'koneksi.php';
+                    <!-- Menambahkan mx-0 untuk menghilangkan margin horizontal -->
+                    <?php
+                    include 'koneksi.php';
 
-                        // Menghitung total Data Raw
-                        $query_total = "SELECT COUNT(*) AS total_rows FROM datapks";
-                        $result_total = mysqli_query($koneksi, $query_total);
-                        $total_rows_datapks = ($result_total) ? mysqli_fetch_assoc($result_total)['total_rows'] : "Error: " . mysqli_error($koneksi);
+                    // Menghitung total Data Raw
+                    $query_total = "SELECT COUNT(*) AS total_rows FROM datapks";
+                    $result_total = mysqli_query($koneksi, $query_total);
+                    $total_rows_datapks = ($result_total) ? mysqli_fetch_assoc($result_total)['total_rows'] : "Error: " . mysqli_error($koneksi);
 
-                        // Menghitung data Aktif (tanggal_akhir lebih besar dari hari ini)
-                        $query_aktif = "SELECT COUNT(*) AS total_aktif FROM datapks WHERE tanggalAkhir > CURDATE()";
-                        $result_aktif = mysqli_query($koneksi, $query_aktif);
-                        $total_rows_aktif = ($result_aktif) ? mysqli_fetch_assoc($result_aktif)['total_aktif'] : "Error: " . mysqli_error($koneksi);
+                    // Menghitung data Aktif (tanggal_akhir lebih besar dari hari ini)
+                    $query_aktif = "SELECT COUNT(*) AS total_aktif FROM datapks WHERE tanggalAkhir > CURDATE()";
+                    $result_aktif = mysqli_query($koneksi, $query_aktif);
+                    $total_rows_aktif = ($result_aktif) ? mysqli_fetch_assoc($result_aktif)['total_aktif'] : "Error: " . mysqli_error($koneksi);
 
-                        // Menghitung data Jatuh Tempo (tanggal_akhir antara hari ini dan 30 hari mendatang)
-                        // Menghitung total data jatuh tempo
-                        $query_jatuh_tempo = "SELECT COUNT(*) AS total_jatuh_tempo FROM datapks WHERE tanggalAkhir > CURDATE() AND tanggalAkhir <= DATE_ADD(CURDATE(), INTERVAL 45 DAY)";
-                        $result_jatuh_tempo = mysqli_query($koneksi, $query_jatuh_tempo);
-                        $total_rows_jatuh_tempo = ($result_jatuh_tempo) ? mysqli_fetch_assoc($result_jatuh_tempo)['total_jatuh_tempo'] : "Error: " . mysqli_error($koneksi);
+                    // Menghitung data Jatuh Tempo (tanggal_akhir antara hari ini dan 30 hari mendatang)
+                    // Menghitung total data jatuh tempo
+                    $query_jatuh_tempo = "SELECT COUNT(*) AS total_jatuh_tempo FROM datapks WHERE tanggalAkhir > CURDATE() AND tanggalAkhir <= DATE_ADD(CURDATE(), INTERVAL 45 DAY)";
+                    $result_jatuh_tempo = mysqli_query($koneksi, $query_jatuh_tempo);
+                    $total_rows_jatuh_tempo = ($result_jatuh_tempo) ? mysqli_fetch_assoc($result_jatuh_tempo)['total_jatuh_tempo'] : "Error: " . mysqli_error($koneksi);
 
-                        // Menghitung data Expired (tanggal_akhir lebih kecil dari hari ini)
-                        $query_expired = "SELECT COUNT(*) AS total_expired FROM datapks WHERE tanggalAkhir < CURDATE()";
-                        $result_expired = mysqli_query($koneksi, $query_expired);
-                        $total_rows_expired = ($result_expired) ? mysqli_fetch_assoc($result_expired)['total_expired'] : "Error: " . mysqli_error($koneksi);
+                    // Menghitung data Expired (tanggal_akhir lebih kecil dari hari ini)
+                    $query_expired = "SELECT COUNT(*) AS total_expired FROM datapks WHERE tanggalAkhir < CURDATE()";
+                    $result_expired = mysqli_query($koneksi, $query_expired);
+                    $total_rows_expired = ($result_expired) ? mysqli_fetch_assoc($result_expired)['total_expired'] : "Error: " . mysqli_error($koneksi);
 
-                        // Menampilkan data ke dalam elemen card
-                        echo "
-                            <div class='col-12 col--6 col-xl-4 mb-4'> <!-- Menambahkan margin bawah -->
+                    // Menampilkan data ke dalam elemen card
+                    echo "
+                        <div class='row'>
+                            <div class='col-3 mb-4'> <!-- Menambahkan margin bawah -->
                                 <div class='card h-100'>
                                     <a href='datapks.php' style='text-decoration: none; color: inherit;'>
                                         <div class='card-body'>
@@ -88,7 +89,7 @@
                                 </div>
                             </div>
 
-                            <div class='col-12 col-md-6 col-xl-4 mb-4'> <!-- Menambahkan margin bawah -->
+                            <div class='col-3 mb-4'> <!-- Menambahkan margin bawah -->
                                 <div class='card h-100'>
                                     <a href='datapks.php' style='text-decoration: none; color: inherit;'>
                                         <div class='card-body'>
@@ -99,7 +100,7 @@
                                 </div>
                             </div>
 
-                            <div class='col-12 col-md-6 col-xl-4 mb-4'> <!-- Menambahkan margin bawah -->
+                            <div class='col-3 mb-4'> <!-- Menambahkan margin bawah -->
                                 <div class='card h-100'>
                                     <a href='datapks.php' style='text-decoration: none; color: inherit;'>
                                         <div class='card-body'>
@@ -110,7 +111,7 @@
                                 </div>
                             </div>
 
-                            <div class='col-12 col-md-6 col-xl-4 mb-4'> <!-- Menambahkan margin bawah -->
+                            <div class='col-3 mb-4'> <!-- Menambahkan margin bawah -->
                                 <div class='card h-100'>
                                     <a href='datapks.php' style='text-decoration: none; color: inherit;'>
                                         <div class='card-body'>
@@ -120,10 +121,10 @@
                                     </a>
                                 </div>
                             </div>
+                        </div>
 
                             ";
-                        ?>
-                    </div>
+                    ?>
 
                     <div class="row">
                         <div class="col-xl-6">
@@ -134,9 +135,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row">
                         <?php
 
                         // Menghitung jumlah data berdasarkan tahun dari tanggal_akhir
@@ -176,6 +174,35 @@
                         ";
                         ?>
                     </div>
+
+                    <div class="row">
+                        <div class='col-xl-12'>
+                            <div class='card mb-4'>
+                                <div class='card-body'>
+                                    <h5 class='card-title'>Grafik PKS Summary Bulan</h5>
+                                    <select id='yearSelect' class='form-select mb-3' aria-label='Select Year'>
+                                        <option value='' disabled selected>Pilih Tahun</option>
+                                        <?php
+                                        // Fetch all unique years from the database
+                                        $query_years = "SELECT DISTINCT YEAR(tanggalAkhir) AS tahun FROM datapks ORDER BY tahun DESC";
+                                        $result_years = mysqli_query($koneksi, $query_years);
+
+                                        if ($result_years) {
+                                            while ($row = mysqli_fetch_assoc($result_years)) {
+                                                echo "<option value='{$row['tahun']}'>{$row['tahun']}</option>";
+                                            }
+                                        } else {
+                                            echo "Error: " . mysqli_error($koneksi);
+                                        }
+                                        ?>
+                                    </select>
+                                    <canvas id='monthbarChart' width='100%' height='30'></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
 
                     <!-- End of Hasil Pengujian -->
 
@@ -293,6 +320,79 @@
                         title: {
                             display: true,
                             text: 'Tahun'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Function to update the month chart based on the selected year
+        function updateMonthChart(year) {
+            $.ajax({
+                url: 'fetch_month_data.php', // Make sure this file exists
+                type: 'POST',
+                data: {
+                    selectedYear: year
+                },
+                success: function(response) {
+                    const data = JSON.parse(response);
+
+                    // Update the chart labels and data
+                    monthBarChart.data.labels = data.bulan.map(month => {
+                        const date = new Date(0, month - 1);
+                        return date.toLocaleString('default', {
+                            month: 'long'
+                        });
+                    });
+                    monthBarChart.data.datasets[0].data = data.total;
+                    monthBarChart.update();
+                },
+                error: function() {
+                    console.error("Error fetching data");
+                }
+            });
+        }
+
+        // Event listener for year selection
+        document.getElementById('yearSelect').addEventListener('change', function() {
+            const selectedYear = this.value;
+            updateMonthChart(selectedYear);
+        });
+
+        // Optional: Initialize chart with the current year's data when the page loads
+        // const currentYear = new Date().getFullYear();
+        // updateMonthChart(currentYear);
+
+
+
+        // Initialize the month bar chart with empty data or default data
+        const ctxMonth = document.getElementById('monthbarChart').getContext('2d');
+        const monthBarChart = new Chart(ctxMonth, {
+            type: 'bar',
+            data: {
+                labels: [], // Empty initially
+                datasets: [{
+                    label: 'Jumlah Data PKS per Bulan',
+                    data: [], // Empty initially
+                    backgroundColor: 'rgba(255, 159, 64, 0.5)', // Orange color for the bars
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Bulan'
                         }
                     }
                 }
